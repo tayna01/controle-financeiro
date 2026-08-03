@@ -48,6 +48,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       >
         <div className="flex h-16 items-center justify-between border-b border-border px-6">
           <div className="flex items-center gap-2 text-lg font-bold">
+            <img src="/favicon.svg" alt="" className="size-7" />
             Controle Financeiro
           </div>
           <button
@@ -81,8 +82,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           ))}
         </nav>
 
-        <div className="flex items-center justify-between border-t border-border px-6 py-4">
-          <p className="text-xs text-muted">v1.0</p>
+        <div className="border-t border-border px-6 py-4">
           <button
             className="flex items-center gap-1.5 text-xs font-semibold text-muted transition-colors hover:text-expense"
             onClick={handleLogout}

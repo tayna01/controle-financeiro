@@ -2,6 +2,7 @@ export function AuthAside() {
   return (
     <aside className="hidden flex-col justify-between bg-linear-to-br from-[#5b21b6] to-[#a21caf] p-12 text-white lg:flex lg:w-1/2">
       <div className="flex items-center gap-3 text-xl font-bold">
+        <img src="/favicon.svg" alt="" className="size-8" />
         Controle Financeiro
       </div>
 

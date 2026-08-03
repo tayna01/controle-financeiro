@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Wallet } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -48,7 +47,7 @@ export function Login() {
 
         <div className="w-full max-w-sm">
           <div className="mb-8 flex items-center gap-2 text-xl font-bold lg:hidden">
-            <Wallet className="size-6 text-primary" />
+            <img src="/favicon.svg" alt="" className="size-7" />
             Controle Financeiro
           </div>
 
