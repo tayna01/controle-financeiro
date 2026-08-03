@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -10,30 +10,34 @@ import { Label } from '@/components/ui/label'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
 
-const loginSchema = z.object({
-  email: z.email('Informe um e-mail válido'),
-  senha: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
-})
+const registerSchema = z
+  .object({
+    nome: z.string().min(1, 'Informe seu nome'),
+    email: z.email('Informe um e-mail válido'),
+    senha: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
+    confirmarSenha: z.string().min(6, 'Confirme sua senha'),
+  })
+  .refine((data) => data.senha === data.confirmarSenha, {
+    message: 'As senhas não conferem',
+    path: ['confirmarSenha'],
+  })
 
-type LoginData = z.infer<typeof loginSchema>
+type RegisterData = z.infer<typeof registerSchema>
 
-export function Login() {
+export function Register() {
   const [loading, setLoading] = useState(false)
-  const [mockMessage, setMockMessage] = useState<string | null>(null)
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginData>({ resolver: zodResolver(loginSchema) })
+  } = useForm<RegisterData>({ resolver: zodResolver(registerSchema) })
 
-  function onSubmit(data: LoginData) {
+  function onSubmit() {
     setLoading(true)
-    setMockMessage(null)
     setTimeout(() => {
       setLoading(false)
-      setMockMessage(
-        `Login simulado: ${data.email} (backend ainda não integrado)`,
-      )
+      navigate('/login')
     }, 1200)
   }
 
@@ -52,9 +56,9 @@ export function Login() {
             Controle Financeiro
           </div>
 
-          <h2 className="text-2xl font-bold">Bem-vindo de volta</h2>
+          <h2 className="text-2xl font-bold">Crie sua conta</h2>
           <p className="mt-1 text-sm text-muted">
-            Entre com suas credenciais para acessar sua conta
+            Preencha os dados abaixo para começar a usar o Controle Financeiro
           </p>
 
           <form
@@ -62,6 +66,20 @@ export function Login() {
             onSubmit={handleSubmit(onSubmit)}
             noValidate
           >
+            <div className="space-y-2">
+              <Label htmlFor="nome">Nome</Label>
+              <Input
+                id="nome"
+                type="text"
+                placeholder="Seu nome completo"
+                autoComplete="name"
+                {...register('nome')}
+              />
+              {errors.nome && (
+                <p className="text-sm text-expense">{errors.nome.message}</p>
+              )}
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
               <Input
@@ -77,20 +95,12 @@ export function Login() {
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="senha">Senha</Label>
-                <Link
-                  to="/esqueci-senha"
-                  className="text-sm font-medium text-primary hover:underline"
-                >
-                  Esqueceu a senha?
-                </Link>
-              </div>
+              <Label htmlFor="senha">Senha</Label>
               <Input
                 id="senha"
                 type="password"
                 placeholder="••••••••"
-                autoComplete="current-password"
+                autoComplete="new-password"
                 {...register('senha')}
               />
               {errors.senha && (
@@ -98,24 +108,34 @@ export function Login() {
               )}
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="confirmarSenha">Confirmar senha</Label>
+              <Input
+                id="confirmarSenha"
+                type="password"
+                placeholder="••••••••"
+                autoComplete="new-password"
+                {...register('confirmarSenha')}
+              />
+              {errors.confirmarSenha && (
+                <p className="text-sm text-expense">
+                  {errors.confirmarSenha.message}
+                </p>
+              )}
+            </div>
+
             <Button type="submit" size="lg" className="w-full" disabled={loading}>
-              {loading ? 'Entrando...' : 'Entrar'}
+              {loading ? 'Cadastrando...' : 'Criar conta'}
             </Button>
           </form>
 
-          {mockMessage && (
-            <p className="mt-4 rounded-xl bg-primary/10 px-4 py-3 text-sm text-primary">
-              {mockMessage}
-            </p>
-          )}
-
           <p className="mt-8 text-center text-sm text-muted">
-            Não tem uma conta?{' '}
+            Já tem uma conta?{' '}
             <Link
-              to="/cadastro"
+              to="/login"
               className="font-semibold text-primary hover:underline"
             >
-              Cadastre-se
+              Entrar
             </Link>
           </p>
         </div>
