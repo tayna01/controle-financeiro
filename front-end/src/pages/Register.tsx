@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Wallet } from 'lucide-react'
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { PasswordInput } from '@/components/ui/password-input'
+import { PasswordStrength } from '@/components/password-strength'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
 
@@ -31,13 +32,26 @@ export function Register() {
   const {
     register,
     handleSubmit,
+    control,
+    setError,
     formState: { errors },
   } = useForm<RegisterData>({ resolver: zodResolver(registerSchema) })
 
-  function onSubmit() {
+  const senha = useWatch({ control, name: 'senha', defaultValue: '' })
+
+  const MOCK_EMAILS_CADASTRADOS = ['usuario@exemplo.com', 'teste@exemplo.com']
+
+  function onSubmit(data: RegisterData) {
     setLoading(true)
     setTimeout(() => {
       setLoading(false)
+      if (MOCK_EMAILS_CADASTRADOS.includes(data.email.toLowerCase())) {
+        setError('email', {
+          type: 'manual',
+          message: 'Este e-mail já está cadastrado',
+        })
+        return
+      }
       navigate('/login')
     }, 1200)
   }
@@ -106,6 +120,7 @@ export function Register() {
               {errors.senha && (
                 <p className="text-sm text-expense">{errors.senha.message}</p>
               )}
+              <PasswordStrength password={senha} />
             </div>
 
             <div className="space-y-2">
