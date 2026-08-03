@@ -1,73 +1,70 @@
-# React + TypeScript + Vite
+# Controle Financeiro
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Projeto final da disciplina de Programação Web -  sistema de controle financeiro pessoal com acompanhamento de receitas, despesas e gráficos.
 
-Currently, two official plugins are available:
+## Estrutura
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Pasta | Descrição |
+| --- | --- |
+| `front-end/` | Aplicação web em React + TypeScript + Vite |
+| `back-end/` | API em Spring Boot (Java 21) |
 
-## React Compiler
+## Stack atual
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**Front-end**
+| Tecnologia | Uso |
+| --- | --- |
+| React 19 + TypeScript 6 | Base da aplicação |
+| Vite 8 | Build e dev server |
+| Tailwind CSS 4 | Estilização utilitária |
+| React Router 7 | Navegação entre telas |
+| React Hook Form + Zod | Formulários e validação |
+| Radix UI | Componentes acessíveis (dialog, toast, label, etc.) |
+| Lucide React | Ícones |
+| CVA + clsx + tailwind-merge | Variantes de componentes |
+| ESLint + typescript-eslint | Qualidade de código |
 
-## Expanding the ESLint configuration
+**Back-end** - Spring Boot 3.5 (JPA, Security, Validation) + PostgreSQL.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Paleta de cores — Violeta
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Definida em `front-end/src/palette.css`, disponível no Tailwind via `bg-primary`, `text-muted`, `bg-surface`, `text-expense`, etc. Tema escuro com a classe `.dark`.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+| Variável | Claro | Escuro |
+| --- | --- | --- |
+| `--primary` | `#7c3aed` | `#a78bfa` |
+| `--primary-foreground` | `#ffffff` | `#17121f` |
+| `--accent` | `#d946ef` | `#e879f9` |
+| `--income` | `#16a34a` | `#4ade80` |
+| `--expense` | `#e11d48` | `#fb7185` |
+| `--background` | `#faf9fc` | `#17121f` |
+| `--surface` | `#ffffff` | `#241c33` |
+| `--foreground` | `#18181b` | `#f4f4f5` |
+| `--muted` | `#71717a` | `#a1a1aa` |
+| `--border` | `#e9e5f0` | `#322a45` |
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Fontes
+
+`system-ui, 'Segoe UI', Roboto, sans-serif` — definida em `front-end/src/index.css`.
+
+
+## Como rodar
+
+**Front-end**
+
+```bash
+cd front-end
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+**Back-end** (requer PostgreSQL em `localhost:5432`, banco `backend`)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd back-end
+./mvnw spring-boot:run
 ```
+
+## Nota
+
+Este README é está em desenvolvimento, conforme as atualizações do código. 
