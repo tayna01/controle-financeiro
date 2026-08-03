@@ -48,7 +48,10 @@ export function Register() {
     trigger,
     setError,
     formState: { errors },
-  } = useForm<RegisterData>({ resolver: zodResolver(registerSchema) })
+  } = useForm<RegisterData>({
+    resolver: zodResolver(registerSchema),
+    mode: 'onTouched',
+  })
 
   const senha = useWatch({ control, name: 'senha', defaultValue: '' })
 
@@ -73,7 +76,9 @@ export function Register() {
         })
         return
       }
-      navigate('/login')
+      navigate('/login', {
+        state: { successMessage: 'Conta criada com sucesso. Faça login.' },
+      })
     }, 1200)
   }
 
