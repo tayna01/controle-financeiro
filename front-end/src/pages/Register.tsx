@@ -7,6 +7,7 @@ import { Wallet } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PasswordInput } from '@/components/ui/password-input'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
 
@@ -96,9 +97,8 @@ export function Register() {
 
             <div className="space-y-2">
               <Label htmlFor="senha">Senha</Label>
-              <Input
+              <PasswordInput
                 id="senha"
-                type="password"
                 placeholder="••••••••"
                 autoComplete="new-password"
                 {...register('senha')}
@@ -110,9 +110,8 @@ export function Register() {
 
             <div className="space-y-2">
               <Label htmlFor="confirmarSenha">Confirmar senha</Label>
-              <Input
+              <PasswordInput
                 id="confirmarSenha"
-                type="password"
                 placeholder="••••••••"
                 autoComplete="new-password"
                 {...register('confirmarSenha')}

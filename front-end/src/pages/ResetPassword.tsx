@@ -4,8 +4,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PasswordInput } from '@/components/ui/password-input'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
 
@@ -99,13 +99,12 @@ export function ResetPassword() {
               >
                 <div className="space-y-2">
                   <Label htmlFor="senha">Nova senha</Label>
-                  <Input
-                    id="senha"
-                    type="password"
-                    placeholder="••••••••"
-                    autoComplete="new-password"
-                    {...register('senha')}
-                  />
+<PasswordInput
+                  id="senha"
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                  {...register('senha')}
+                />
                   {errors.senha && (
                     <p className="text-sm text-expense">
                       {errors.senha.message}
@@ -115,13 +114,12 @@ export function ResetPassword() {
 
                 <div className="space-y-2">
                   <Label htmlFor="confirmarSenha">Confirmar nova senha</Label>
-                  <Input
-                    id="confirmarSenha"
-                    type="password"
-                    placeholder="••••••••"
-                    autoComplete="new-password"
-                    {...register('confirmarSenha')}
-                  />
+<PasswordInput
+                  id="confirmarSenha"
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                  {...register('confirmarSenha')}
+                />
                   {errors.confirmarSenha && (
                     <p className="text-sm text-expense">
                       {errors.confirmarSenha.message}
