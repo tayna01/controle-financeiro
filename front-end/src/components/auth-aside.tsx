@@ -18,7 +18,7 @@ export function AuthAside() {
         </p>
       </div>
 
-      <p className="text-sm text-white/60">versão 1.0</p>
+      <p className="text-sm text-white/60">© 2026 Controle Financeiro</p>
     </aside>
   )
 }
