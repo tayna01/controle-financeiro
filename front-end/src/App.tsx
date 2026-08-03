@@ -1,6 +1,8 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/app-layout'
+import { RequireAuth } from '@/components/require-auth'
 import { Categories } from '@/pages/Categories'
+import { ChangePassword } from '@/pages/ChangePassword'
 import { Dashboard } from '@/pages/Dashboard'
 import { ForgotPassword } from '@/pages/ForgotPassword'
 import { Login } from '@/pages/Login'
@@ -17,11 +19,14 @@ function App() {
       <Route path="/redefinir-senha/:token" element={<ResetPassword />} />
       <Route path="/cadastro" element={<Register />} />
 
-      <Route element={<AppLayout />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/transacoes" element={<Transactions />} />
-        <Route path="/categorias" element={<Categories />} />
-        <Route path="/perfil" element={<Profile />} />
+      <Route element={<RequireAuth />}>
+        <Route element={<AppLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/transacoes" element={<Transactions />} />
+          <Route path="/categorias" element={<Categories />} />
+          <Route path="/perfil" element={<Profile />} />
+          <Route path="/perfil/senha" element={<ChangePassword />} />
+        </Route>
       </Route>
 
       <Route path="*" element={<Navigate to="/login" replace />} />

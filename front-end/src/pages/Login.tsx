@@ -1,14 +1,16 @@
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { PasswordInput } from '@/components/ui/password-input'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { useAuth } from '@/contexts/auth-context'
 
 const loginSchema = z.object({
   email: z.email('Informe um e-mail válido'),
@@ -19,10 +21,14 @@ type LoginData = z.infer<typeof loginSchema>
 
 export function Login() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { isAuthenticated, login } = useAuth()
   const [loading, setLoading] = useState(false)
-  const [mockMessage, setMockMessage] = useState<string | null>(null)
+  const [authError, setAuthError] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(
-    () => (location.state as { successMessage?: string } | null)?.successMessage ?? null,
+    () =>
+      (location.state as { successMessage?: string } | null)?.successMessage ??
+      null,
   )
   const {
     register,
@@ -30,16 +36,21 @@ export function Login() {
     formState: { errors },
   } = useForm<LoginData>({ resolver: zodResolver(loginSchema) })
 
-  function onSubmit(data: LoginData) {
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />
+  }
+
+  async function onSubmit(data: LoginData) {
     setLoading(true)
-    setMockMessage(null)
+    setAuthError(null)
     setSuccessMessage(null)
-    setTimeout(() => {
+    try {
+      await login(data.email, data.senha)
+      navigate('/dashboard', { replace: true })
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'Falha ao entrar')
       setLoading(false)
-      setMockMessage(
-        `Login simulado: ${data.email} (backend ainda não integrado)`,
-      )
-    }, 1200)
+    }
   }
 
   return (
@@ -103,19 +114,20 @@ export function Login() {
             </div>
 
             <Button type="submit" size="lg" className="w-full" disabled={loading}>
-              {loading ? 'Entrando...' : 'Entrar'}
+              {loading && <Loader2 className="size-5 animate-spin" />}
+              Entrar
             </Button>
           </form>
+
+          {authError && (
+            <p className="mt-4 rounded-xl bg-expense/10 px-4 py-3 text-sm text-expense">
+              {authError}
+            </p>
+          )}
 
           {successMessage && (
             <p className="mt-4 rounded-xl bg-income/10 px-4 py-3 text-sm text-income">
               {successMessage}
-            </p>
-          )}
-
-          {mockMessage && (
-            <p className="mt-4 rounded-xl bg-primary/10 px-4 py-3 text-sm text-primary">
-              {mockMessage}
             </p>
           )}
 

@@ -9,6 +9,7 @@ import {
   UserRound,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -31,9 +32,10 @@ interface SidebarContentProps {
 
 function SidebarContent({ onNavigate }: SidebarContentProps) {
   const navigate = useNavigate()
+  const { logout } = useAuth()
 
   function handleLogout() {
-    localStorage.removeItem('token')
+    logout()
     navigate('/login', { replace: true })
   }
 
@@ -100,7 +102,10 @@ export function MobileNav() {
           <span className="sr-only">Abrir menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="flex w-72 flex-col gap-0 p-0">
+      <SheetContent
+        side="left"
+        className="flex w-72 flex-col gap-0 p-0"
+      >
         <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
         <SidebarContent onNavigate={() => setOpen(false)} />
       </SheetContent>
