@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Wallet } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -18,21 +17,18 @@ type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>
 
 export function ForgotPassword() {
   const [loading, setLoading] = useState(false)
-  const [mockMessage, setMockMessage] = useState<string | null>(null)
+  const [sent, setSent] = useState(false)
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<ForgotPasswordData>({ resolver: zodResolver(forgotPasswordSchema) })
 
-  function onSubmit(data: ForgotPasswordData) {
+  function onSubmit() {
     setLoading(true)
-    setMockMessage(null)
     setTimeout(() => {
       setLoading(false)
-      setMockMessage(
-        `Link de recuperação enviado para ${data.email}`,
-      )
+      setSent(true)
     }, 1200)
   }
 
@@ -47,49 +43,85 @@ export function ForgotPassword() {
 
         <div className="w-full max-w-sm">
           <div className="mb-8 flex items-center gap-2 text-xl font-bold lg:hidden">
-            <Wallet className="size-6 text-primary" />
+            <img src="/favicon.svg" alt="" className="size-7" />
             Controle Financeiro
           </div>
 
-          <h2 className="text-2xl font-bold">Esqueceu sua senha?</h2>
-          <p className="mt-1 text-sm text-muted">
-            Informe seu e-mail cadastrado e enviaremos um link para redefinir
-            sua senha
-          </p>
+          {sent ? (
+            <>
+              <h2 className="text-2xl font-bold">Verifique seu e-mail</h2>
+              <p className="mt-1 text-sm text-muted">
+                Se o e-mail informado estiver cadastrado, enviaremos um link de
+                redefinição para você.
+              </p>
 
-          <form
-            className="mt-8 space-y-5"
-            onSubmit={handleSubmit(onSubmit)}
-            noValidate
-          >
-            <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="email@exemplo.com"
-                autoComplete="email"
-                {...register('email')}
-              />
-              {errors.email && (
-                <p className="text-sm text-expense">{errors.email.message}</p>
-              )}
-            </div>
+              <div className="mt-8 rounded-xl bg-primary/10 px-4 py-3 text-sm text-primary">
+                Link simulado (apenas para teste):
+                <br />
+                <Link
+                  to="/redefinir-senha/token-demo"
+                  className="font-semibold underline"
+                >
+                  /redefinir-senha/token-demo
+                </Link>
+              </div>
 
-            <Button type="submit" size="lg" className="w-full" disabled={loading}>
-              {loading ? 'Enviando...' : 'Enviar link'}
-            </Button>
-          </form>
+              <Button
+                type="button"
+                size="lg"
+                className="mt-4 w-full"
+                onClick={() => setSent(false)}
+              >
+                Enviar novamente
+              </Button>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold">Esqueceu sua senha?</h2>
+              <p className="mt-1 text-sm text-muted">
+                Informe seu e-mail cadastrado e enviaremos um link para
+                redefinir sua senha
+              </p>
 
-          {mockMessage && (
-            <p className="mt-4 rounded-xl bg-primary/10 px-4 py-3 text-sm text-primary">
-              {mockMessage}
-            </p>
+              <form
+                className="mt-8 space-y-5"
+                onSubmit={handleSubmit(onSubmit)}
+                noValidate
+              >
+                <div className="space-y-2">
+                  <Label htmlFor="email">E-mail</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="email@exemplo.com"
+                    autoComplete="email"
+                    {...register('email')}
+                  />
+                  {errors.email && (
+                    <p className="text-sm text-expense">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full"
+                  disabled={loading}
+                >
+                  {loading ? 'Enviando...' : 'Enviar link'}
+                </Button>
+              </form>
+            </>
           )}
 
           <p className="mt-8 text-center text-sm text-muted">
             Lembrou a senha?{' '}
-            <Link to="/login" className="font-semibold text-primary hover:underline">
+            <Link
+              to="/login"
+              className="font-semibold text-primary hover:underline"
+            >
               Voltar para o login
             </Link>
           </p>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -17,8 +17,12 @@ const loginSchema = z.object({
 type LoginData = z.infer<typeof loginSchema>
 
 export function Login() {
+  const location = useLocation()
   const [loading, setLoading] = useState(false)
   const [mockMessage, setMockMessage] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(
+    () => (location.state as { successMessage?: string } | null)?.successMessage ?? null,
+  )
   const {
     register,
     handleSubmit,
@@ -28,6 +32,7 @@ export function Login() {
   function onSubmit(data: LoginData) {
     setLoading(true)
     setMockMessage(null)
+    setSuccessMessage(null)
     setTimeout(() => {
       setLoading(false)
       setMockMessage(
@@ -79,7 +84,7 @@ export function Login() {
               <div className="flex items-center justify-between">
                 <Label htmlFor="senha">Senha</Label>
                 <Link
-                  to="/esqueci-senha"
+                  to="/recuperar-senha"
                   className="text-sm font-medium text-primary hover:underline"
                 >
                   Esqueceu a senha?
@@ -101,6 +106,12 @@ export function Login() {
               {loading ? 'Entrando...' : 'Entrar'}
             </Button>
           </form>
+
+          {successMessage && (
+            <p className="mt-4 rounded-xl bg-income/10 px-4 py-3 text-sm text-income">
+              {successMessage}
+            </p>
+          )}
 
           {mockMessage && (
             <p className="mt-4 rounded-xl bg-primary/10 px-4 py-3 text-sm text-primary">

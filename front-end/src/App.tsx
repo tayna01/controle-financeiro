@@ -6,13 +6,15 @@ import { ForgotPassword } from '@/pages/ForgotPassword'
 import { Login } from '@/pages/Login'
 import { Profile } from '@/pages/Profile'
 import { Register } from '@/pages/Register'
+import { ResetPassword } from '@/pages/ResetPassword'
 import { Transactions } from '@/pages/Transactions'
 
 function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/esqueci-senha" element={<ForgotPassword />} />
+      <Route path="/recuperar-senha" element={<ForgotPassword />} />
+      <Route path="/redefinir-senha/:token" element={<ResetPassword />} />
       <Route path="/cadastro" element={<Register />} />
 
       <Route element={<AppLayout />}>
