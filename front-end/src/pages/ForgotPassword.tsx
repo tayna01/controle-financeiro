@@ -10,29 +10,28 @@ import { Label } from '@/components/ui/label'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
 
-const loginSchema = z.object({
+const forgotPasswordSchema = z.object({
   email: z.email('Informe um e-mail válido'),
-  senha: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
 })
 
-type LoginData = z.infer<typeof loginSchema>
+type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>
 
-export function Login() {
+export function ForgotPassword() {
   const [loading, setLoading] = useState(false)
   const [mockMessage, setMockMessage] = useState<string | null>(null)
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginData>({ resolver: zodResolver(loginSchema) })
+  } = useForm<ForgotPasswordData>({ resolver: zodResolver(forgotPasswordSchema) })
 
-  function onSubmit(data: LoginData) {
+  function onSubmit(data: ForgotPasswordData) {
     setLoading(true)
     setMockMessage(null)
     setTimeout(() => {
       setLoading(false)
       setMockMessage(
-        `Login simulado: ${data.email} (backend ainda não integrado)`,
+        `Link de recuperação enviado para ${data.email}`,
       )
     }, 1200)
   }
@@ -52,9 +51,10 @@ export function Login() {
             Controle Financeiro
           </div>
 
-          <h2 className="text-2xl font-bold">Bem-vindo de volta</h2>
+          <h2 className="text-2xl font-bold">Esqueceu sua senha?</h2>
           <p className="mt-1 text-sm text-muted">
-            Entre com suas credenciais para acessar sua conta
+            Informe seu e-mail cadastrado e enviaremos um link para redefinir
+            sua senha
           </p>
 
           <form
@@ -76,30 +76,8 @@ export function Login() {
               )}
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="senha">Senha</Label>
-                <Link
-                  to="/esqueci-senha"
-                  className="text-sm font-medium text-primary hover:underline"
-                >
-                  Esqueceu a senha?
-                </Link>
-              </div>
-              <Input
-                id="senha"
-                type="password"
-                placeholder="••••••••"
-                autoComplete="current-password"
-                {...register('senha')}
-              />
-              {errors.senha && (
-                <p className="text-sm text-expense">{errors.senha.message}</p>
-              )}
-            </div>
-
             <Button type="submit" size="lg" className="w-full" disabled={loading}>
-              {loading ? 'Entrando...' : 'Entrar'}
+              {loading ? 'Enviando...' : 'Enviar link'}
             </Button>
           </form>
 
@@ -110,10 +88,10 @@ export function Login() {
           )}
 
           <p className="mt-8 text-center text-sm text-muted">
-            Não tem uma conta?{' '}
-            <a href="#" className="font-semibold text-primary hover:underline">
-              Cadastre-se
-            </a>
+            Lembrou a senha?{' '}
+            <Link to="/login" className="font-semibold text-primary hover:underline">
+              Voltar para o login
+            </Link>
           </p>
         </div>
       </section>
