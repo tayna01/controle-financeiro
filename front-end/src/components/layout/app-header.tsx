@@ -1,8 +1,10 @@
+import { MobileNav } from '@/components/layout/sidebar'
 import { ThemeToggle } from '@/components/theme-toggle'
 
 export function AppHeader() {
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-end border-b border-border bg-background/80 px-4 backdrop-blur lg:px-8">
+    <header className="flex h-16 items-center justify-between gap-4 border-b border-border bg-background px-4 lg:justify-end lg:px-8">
+      <MobileNav />
       <ThemeToggle />
     </header>
   )

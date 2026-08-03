@@ -19,7 +19,7 @@ Projeto final da disciplina de Programação Web -  sistema de controle financei
 | Tailwind CSS 4 | Estilização utilitária |
 | React Router 7 | Navegação entre telas |
 | React Hook Form + Zod | Formulários e validação |
-| Radix UI | Componentes acessíveis (dialog, toast, label, etc.) |
+| shadcn/ui | Componentes de UI (Radix + Tailwind), adicionados via CLI (`npx shadcn@latest add`) |
 | Lucide React | Ícones |
 | CVA + clsx + tailwind-merge | Variantes de componentes |
 | ESLint + typescript-eslint | Qualidade de código |

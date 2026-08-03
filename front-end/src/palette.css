@@ -2,6 +2,7 @@
   --primary: #7c3aed;
   --primary-foreground: #ffffff;
   --accent: #d946ef;
+  --accent-foreground: #ffffff;
   --income: #16a34a;
   --expense: #e11d48;
   --background: #faf9fc;
@@ -10,12 +11,27 @@
   --muted: #71717a;
   --border: #e9e5f0;
   color-scheme: light;
+
+  /* Tokens padrão shadcn/ui */
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
+  --secondary: #f1eff7;
+  --secondary-foreground: #18181b;
+  --muted-foreground: var(--muted);
+  --destructive: var(--expense);
+  --destructive-foreground: #ffffff;
+  --input: var(--border);
+  --ring: var(--primary);
+  --radius: 0.75rem;
 }
 
 .dark {
   --primary: #a78bfa;
   --primary-foreground: #17121f;
   --accent: #e879f9;
+  --accent-foreground: #17121f;
   --income: #4ade80;
   --expense: #fb7185;
   --background: #17121f;
@@ -24,4 +40,18 @@
   --muted: #a1a1aa;
   --border: #322a45;
   color-scheme: dark;
+
+  /* Tokens padrão shadcn/ui */
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
+  --secondary: #2d2540;
+  --secondary-foreground: #f4f4f5;
+  --muted-foreground: var(--muted);
+  --destructive: var(--expense);
+  --destructive-foreground: #ffffff;
+  --input: var(--border);
+  --ring: var(--primary);
+  --radius: 0.75rem;
 }
