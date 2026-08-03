@@ -6,6 +6,7 @@ import { Wallet } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
 
 const loginSchema = z.object({
@@ -37,25 +38,7 @@ export function Login() {
 
   return (
     <main className="flex min-h-screen bg-background text-foreground">
-      <aside className="hidden flex-col justify-between bg-gradient-to-br from-[#5b21b6] to-[#a21caf] p-12 text-white lg:flex lg:w-1/2">
-        <div className="flex items-center gap-3 text-xl font-bold">
-          Controle Financeiro
-        </div>
-
-        <div>
-          <h1 className="text-4xl font-bold leading-tight">
-            Organize suas finanças
-            <br />
-            em um só lugar
-          </h1>
-          <p className="mt-4 max-w-md text-white/80">
-            Acompanhe receitas e despesas, veja gráficos do seu mês e mantenha
-            o controle do seu dinheiro.
-          </p>
-        </div>
-
-        <p className="text-sm text-white/60">versão 1.0</p>
-      </aside>
+      <AuthAside />
 
       <section className="relative flex flex-1 flex-col items-center justify-center p-6">
         <div className="absolute right-6 top-6">
