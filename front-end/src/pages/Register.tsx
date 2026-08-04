@@ -106,7 +106,7 @@ export function Register() {
               <div
                 key={currentStep.title}
                 className={cn(
-                  'h-1 flex-1 rounded-full transition-colors',
+                  'h-1 flex-1 rounded-full',
                   index <= step ? 'bg-primary' : 'bg-border',
                 )}
               />
