@@ -9,12 +9,13 @@ import { PasswordInput } from '@/components/ui/password-input'
 import { PasswordStrength } from '@/components/password-strength'
 import { PageHeader } from '@/components/page-header'
 import { changePassword } from '@/services/auth'
+import { passwordSchema, requiredString } from '@/lib/validation'
 
 const changePasswordSchema = z
   .object({
-    senhaAtual: z.string().min(1, 'Informe sua senha atual'),
-    novaSenha: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
-    confirmarNovaSenha: z.string().min(6, 'Confirme a nova senha'),
+    senhaAtual: requiredString,
+    novaSenha: passwordSchema,
+    confirmarNovaSenha: requiredString,
   })
   .refine((data) => data.novaSenha === data.confirmarNovaSenha, {
     message: 'As senhas não conferem',

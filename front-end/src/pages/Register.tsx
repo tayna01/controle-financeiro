@@ -11,13 +11,14 @@ import { PasswordStrength } from '@/components/password-strength'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { cn } from '@/lib/utils'
+import { emailSchema, passwordSchema, requiredString } from '@/lib/validation'
 
 const registerSchema = z
   .object({
-    nome: z.string().min(1, 'Informe seu nome'),
-    email: z.email('Informe um e-mail válido'),
-    senha: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
-    confirmarSenha: z.string().min(6, 'Confirme sua senha'),
+    nome: requiredString,
+    email: emailSchema,
+    senha: passwordSchema,
+    confirmarSenha: requiredString,
   })
   .refine((data) => data.senha === data.confirmarSenha, {
     message: 'As senhas não conferem',

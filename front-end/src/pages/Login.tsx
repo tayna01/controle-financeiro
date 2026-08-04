@@ -11,10 +11,14 @@ import { PasswordInput } from '@/components/ui/password-input'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { useAuth } from '@/contexts/auth-context'
+import { emailSchema } from '@/lib/validation'
 
 const loginSchema = z.object({
-  email: z.email('Informe um e-mail válido'),
-  senha: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
+  email: emailSchema,
+  senha: z
+    .string()
+    .min(1, 'Campo obrigatório')
+    .min(6, 'A senha deve ter pelo menos 6 caracteres'),
 })
 
 type LoginData = z.infer<typeof loginSchema>

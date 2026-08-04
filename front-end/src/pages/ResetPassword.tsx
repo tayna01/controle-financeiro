@@ -8,11 +8,12 @@ import { Label } from '@/components/ui/label'
 import { PasswordInput } from '@/components/ui/password-input'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { passwordSchema, requiredString } from '@/lib/validation'
 
 const resetPasswordSchema = z
   .object({
-    senha: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
-    confirmarSenha: z.string().min(6, 'Confirme sua senha'),
+    senha: passwordSchema,
+    confirmarSenha: requiredString,
   })
   .refine((data) => data.senha === data.confirmarSenha, {
     message: 'As senhas não conferem',

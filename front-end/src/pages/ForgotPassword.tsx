@@ -8,9 +8,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { emailSchema } from '@/lib/validation'
 
 const forgotPasswordSchema = z.object({
-  email: z.email('Informe um e-mail válido'),
+  email: emailSchema,
 })
 
 type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>
