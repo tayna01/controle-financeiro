@@ -117,7 +117,12 @@ export function Login() {
               )}
             </div>
 
-            <Button type="submit" size="lg" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full"
+              disabled={loading}
+            >
               {loading && <Loader2 className="size-5 animate-spin" />}
               Entrar
             </Button>

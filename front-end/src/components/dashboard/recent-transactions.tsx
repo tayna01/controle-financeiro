@@ -20,9 +20,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
     <Card className="p-6">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">Lançamentos recentes</h3>
-        <span className="text-sm text-muted">
-          {transactions.length} no mês
-        </span>
+        <span className="text-sm text-muted">{transactions.length} no mês</span>
       </div>
 
       <ul className="mt-2 divide-y divide-border">

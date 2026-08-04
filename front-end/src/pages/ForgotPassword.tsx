@@ -23,7 +23,9 @@ export function ForgotPassword() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ForgotPasswordData>({ resolver: zodResolver(forgotPasswordSchema) })
+  } = useForm<ForgotPasswordData>({
+    resolver: zodResolver(forgotPasswordSchema),
+  })
 
   function onSubmit() {
     setLoading(true)

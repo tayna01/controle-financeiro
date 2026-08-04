@@ -27,7 +27,9 @@ export function Profile() {
               </div>
               <div>
                 <h3 className="font-semibold">Segurança</h3>
-                <p className="text-sm text-muted">Altere a senha da sua conta</p>
+                <p className="text-sm text-muted">
+                  Altere a senha da sua conta
+                </p>
               </div>
             </div>
             <span className="text-sm font-semibold text-primary">Alterar</span>

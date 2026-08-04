@@ -50,7 +50,8 @@ export function ChangePassword() {
     } catch (error) {
       setError('senhaAtual', {
         type: 'manual',
-        message: error instanceof Error ? error.message : 'Falha ao alterar senha',
+        message:
+          error instanceof Error ? error.message : 'Falha ao alterar senha',
       })
     } finally {
       setLoading(false)
@@ -84,7 +85,9 @@ export function ChangePassword() {
               {...register('senhaAtual')}
             />
             {errors.senhaAtual && (
-              <p className="text-sm text-expense">{errors.senhaAtual.message}</p>
+              <p className="text-sm text-expense">
+                {errors.senhaAtual.message}
+              </p>
             )}
           </div>
 
@@ -117,12 +120,7 @@ export function ChangePassword() {
             )}
           </div>
 
-          <Button
-            type="submit"
-            size="lg"
-            className="w-full"
-            disabled={loading}
-          >
+          <Button type="submit" size="lg" className="w-full" disabled={loading}>
             Alterar senha
           </Button>
         </form>

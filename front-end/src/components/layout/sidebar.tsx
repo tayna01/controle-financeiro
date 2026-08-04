@@ -20,7 +20,12 @@ import {
 } from '@/components/ui/sheet'
 
 const NAV_ITEMS = [
-  { to: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  {
+    to: '/app/dashboard',
+    label: 'Dashboard',
+    icon: LayoutDashboard,
+    end: true,
+  },
   { to: '/app/transacoes', label: 'Transações', icon: ArrowLeftRight },
   { to: '/app/categorias', label: 'Categorias', icon: Tags },
   { to: '/app/perfil', label: 'Perfil', icon: UserRound },
@@ -102,10 +107,7 @@ export function MobileNav() {
           <span className="sr-only">Abrir menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent
-        side="left"
-        className="flex w-72 flex-col gap-0 p-0"
-      >
+      <SheetContent side="left" className="flex w-72 flex-col gap-0 p-0">
         <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
         <SidebarContent onNavigate={() => setOpen(false)} />
       </SheetContent>

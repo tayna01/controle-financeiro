@@ -100,12 +100,12 @@ export function ResetPassword() {
               >
                 <div className="space-y-2">
                   <Label htmlFor="senha">Nova senha</Label>
-<PasswordInput
-                  id="senha"
-                  placeholder="••••••••"
-                  autoComplete="new-password"
-                  {...register('senha')}
-                />
+                  <PasswordInput
+                    id="senha"
+                    placeholder="••••••••"
+                    autoComplete="new-password"
+                    {...register('senha')}
+                  />
                   {errors.senha && (
                     <p className="text-sm text-expense">
                       {errors.senha.message}
@@ -115,12 +115,12 @@ export function ResetPassword() {
 
                 <div className="space-y-2">
                   <Label htmlFor="confirmarSenha">Confirmar nova senha</Label>
-<PasswordInput
-                  id="confirmarSenha"
-                  placeholder="••••••••"
-                  autoComplete="new-password"
-                  {...register('confirmarSenha')}
-                />
+                  <PasswordInput
+                    id="confirmarSenha"
+                    placeholder="••••••••"
+                    autoComplete="new-password"
+                    {...register('confirmarSenha')}
+                  />
                   {errors.confirmarSenha && (
                     <p className="text-sm text-expense">
                       {errors.confirmarSenha.message}

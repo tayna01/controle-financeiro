@@ -35,7 +35,9 @@ export function PageHeader({
                   {item.label}
                 </Link>
               ) : (
-                <span className={cn(!isLast && 'font-medium')}>{item.label}</span>
+                <span className={cn(!isLast && 'font-medium')}>
+                  {item.label}
+                </span>
               )}
               {!isLast && <ChevronRight className="size-4" />}
             </div>

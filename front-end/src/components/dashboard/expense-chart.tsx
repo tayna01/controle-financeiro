@@ -1,8 +1,23 @@
-import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
+import {
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+} from 'recharts'
 import { Card } from '@/components/ui/card'
 import { formatCurrency, type Transaction } from '@/services/transactions'
 
-const COLORS = ['#7c3aed', '#d946ef', '#16a34a', '#e11d48', '#f59e0b', '#3b82f6', '#06b6d4']
+const COLORS = [
+  '#7c3aed',
+  '#d946ef',
+  '#16a34a',
+  '#e11d48',
+  '#f59e0b',
+  '#3b82f6',
+  '#06b6d4',
+]
 
 interface ExpenseChartProps {
   transactions: Transaction[]
@@ -44,10 +59,7 @@ export function ExpenseChart({ transactions }: ExpenseChartProps) {
                 paddingAngle={2}
               >
                 {data.map((entry, index) => (
-                  <Cell
-                    key={entry.name}
-                    fill={COLORS[index % COLORS.length]}
-                  />
+                  <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
               <Tooltip

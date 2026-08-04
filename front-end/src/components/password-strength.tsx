@@ -20,13 +20,18 @@ export function PasswordStrength({ password }: PasswordStrengthProps) {
   const metCount = STRENGTH_RULES.filter((rule) => rule.test(password)).length
   const filledSegments = Math.min(
     TOTAL_SEGMENTS,
-    Math.max(1, Math.round((metCount / STRENGTH_RULES.length) * TOTAL_SEGMENTS)),
+    Math.max(
+      1,
+      Math.round((metCount / STRENGTH_RULES.length) * TOTAL_SEGMENTS),
+    ),
   )
 
   const level =
-    metCount <= 2 ? { label: 'Senha fraca', bar: 'bg-expense', text: 'text-expense' }
-    : metCount <= 4 ? { label: 'Senha média', bar: 'bg-amber-500', text: 'text-amber-500' }
-    : { label: 'Senha forte', bar: 'bg-income', text: 'text-income' }
+    metCount <= 2
+      ? { label: 'Senha fraca', bar: 'bg-expense', text: 'text-expense' }
+      : metCount <= 4
+        ? { label: 'Senha média', bar: 'bg-amber-500', text: 'text-amber-500' }
+        : { label: 'Senha forte', bar: 'bg-income', text: 'text-income' }
 
   return (
     <div className="space-y-2">
