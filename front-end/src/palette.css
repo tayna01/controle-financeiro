@@ -12,7 +12,6 @@
   --border: #e9e5f0;
   color-scheme: light;
 
-  /* Tokens padrão shadcn/ui */
   --card: var(--surface);
   --card-foreground: var(--foreground);
   --popover: var(--surface);
@@ -41,7 +40,6 @@
   --border: #322a45;
   color-scheme: dark;
 
-  /* Tokens padrão shadcn/ui */
   --card: var(--surface);
   --card-foreground: var(--foreground);
   --popover: var(--surface);
