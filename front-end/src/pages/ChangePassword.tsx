@@ -70,54 +70,58 @@ export function ChangePassword() {
         ]}
       />
 
-      <Card className="w-full max-w-md p-6">
+      <Card className="w-full p-6 lg:p-8">
         <form
-          className="space-y-5"
+          className="space-y-6"
           onSubmit={handleSubmit(onSubmit)}
           noValidate
         >
-          <div className="space-y-2">
-            <Label htmlFor="senhaAtual">Senha atual</Label>
-            <PasswordInput
-              id="senhaAtual"
-              placeholder="••••••••"
-              autoComplete="current-password"
-              {...register('senhaAtual')}
-            />
-            {errors.senhaAtual && (
-              <p className="text-sm text-expense">
-                {errors.senhaAtual.message}
-              </p>
-            )}
-          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="senhaAtual">Senha atual</Label>
+              <PasswordInput
+                id="senhaAtual"
+                placeholder="••••••••"
+                autoComplete="current-password"
+                {...register('senhaAtual')}
+              />
+              {errors.senhaAtual && (
+                <p className="text-sm text-expense">
+                  {errors.senhaAtual.message}
+                </p>
+              )}
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="novaSenha">Nova senha</Label>
-            <PasswordInput
-              id="novaSenha"
-              placeholder="••••••••"
-              autoComplete="new-password"
-              {...register('novaSenha')}
-            />
-            {errors.novaSenha && (
-              <p className="text-sm text-expense">{errors.novaSenha.message}</p>
-            )}
-            <PasswordStrength password={novaSenha} />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="novaSenha">Nova senha</Label>
+              <PasswordInput
+                id="novaSenha"
+                placeholder="••••••••"
+                autoComplete="new-password"
+                {...register('novaSenha')}
+              />
+              {errors.novaSenha && (
+                <p className="text-sm text-expense">
+                  {errors.novaSenha.message}
+                </p>
+              )}
+              <PasswordStrength password={novaSenha} />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="confirmarNovaSenha">Confirmar nova senha</Label>
-            <PasswordInput
-              id="confirmarNovaSenha"
-              placeholder="••••••••"
-              autoComplete="new-password"
-              {...register('confirmarNovaSenha')}
-            />
-            {errors.confirmarNovaSenha && (
-              <p className="text-sm text-expense">
-                {errors.confirmarNovaSenha.message}
-              </p>
-            )}
+            <div className="space-y-2">
+              <Label htmlFor="confirmarNovaSenha">Confirmar nova senha</Label>
+              <PasswordInput
+                id="confirmarNovaSenha"
+                placeholder="••••••••"
+                autoComplete="new-password"
+                {...register('confirmarNovaSenha')}
+              />
+              {errors.confirmarNovaSenha && (
+                <p className="text-sm text-expense">
+                  {errors.confirmarNovaSenha.message}
+                </p>
+              )}
+            </div>
           </div>
 
           <Button type="submit" size="lg" className="w-full" disabled={loading}>
