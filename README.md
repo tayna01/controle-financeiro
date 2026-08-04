@@ -65,6 +65,17 @@ cd back-end
 ./mvnw spring-boot:run
 ```
 
+## Mock e credenciais de teste
+
+O front-end funciona com mocks (sem backend). Os usuários simulados em `front-end/src/services/auth.ts`:
+
+| E-mail | Senha |
+| --- | --- |
+| `usuario@exemplo.com` | `123456` |
+| `teste@exemplo.com` | `123456` |
+
+Rotas principais: `/login`, `/cadastro` (cadastro em 2 etapas), `/recuperar-senha` e `/redefinir-senha/:token` (recuperação). As rotas autenticadas ficam sob o prefixo `/app/`: `/app/dashboard` (resumo, gráfico e lançamentos mockados), `/app/perfil/senha` (alterar senha). São protegidas — usuário deslogado é redirecionado para o login. A sessão é persistida no `localStorage`.
+
 ## Nota
 
 Este README é está em desenvolvimento, conforme as atualizações do código. 

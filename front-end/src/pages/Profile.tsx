@@ -10,7 +10,7 @@ export function Profile() {
         title="Perfil"
         description="Gerencie seus dados e preferências da conta"
         breadcrumbs={[
-          { label: 'Início', to: '/dashboard' },
+          { label: 'Início', to: '/app/dashboard' },
           { label: 'Perfil' },
         ]}
       />
@@ -18,7 +18,7 @@ export function Profile() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="transition-colors hover:border-primary/40">
           <Link
-            to="/perfil/senha"
+            to="/app/perfil/senha"
             className="flex items-center justify-between gap-4 p-6"
           >
             <div className="flex items-center gap-4">

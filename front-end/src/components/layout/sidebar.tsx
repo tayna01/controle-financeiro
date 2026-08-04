@@ -20,10 +20,10 @@ import {
 } from '@/components/ui/sheet'
 
 const NAV_ITEMS = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/transacoes', label: 'Transações', icon: ArrowLeftRight },
-  { to: '/categorias', label: 'Categorias', icon: Tags },
-  { to: '/perfil', label: 'Perfil', icon: UserRound },
+  { to: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/app/transacoes', label: 'Transações', icon: ArrowLeftRight },
+  { to: '/app/categorias', label: 'Categorias', icon: Tags },
+  { to: '/app/perfil', label: 'Perfil', icon: UserRound },
 ]
 
 interface SidebarContentProps {

@@ -7,7 +7,7 @@ export function Transactions() {
         title="Transações"
         description="Gerencie suas receitas e despesas"
         breadcrumbs={[
-          { label: 'Início', to: '/dashboard' },
+          { label: 'Início', to: '/app/dashboard' },
           { label: 'Transações' },
         ]}
       />

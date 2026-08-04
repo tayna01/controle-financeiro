@@ -62,8 +62,8 @@ export function ChangePassword() {
         title="Alterar senha"
         description="Atualize a senha da sua conta"
         breadcrumbs={[
-          { label: 'Início', to: '/dashboard' },
-          { label: 'Perfil', to: '/perfil' },
+          { label: 'Início', to: '/app/dashboard' },
+          { label: 'Perfil', to: '/app/perfil' },
           { label: 'Alterar senha' },
         ]}
       />

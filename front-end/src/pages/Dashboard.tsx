@@ -38,7 +38,7 @@ export function Dashboard() {
         title="Dashboard"
         description="Resumo financeiro de agosto de 2026"
         breadcrumbs={[
-          { label: 'Início', to: '/dashboard' },
+          { label: 'Início', to: '/app/dashboard' },
           { label: 'Dashboard' },
         ]}
       />

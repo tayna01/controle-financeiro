@@ -21,11 +21,11 @@ function App() {
 
       <Route element={<RequireAuth />}>
         <Route element={<AppLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/transacoes" element={<Transactions />} />
-          <Route path="/categorias" element={<Categories />} />
-          <Route path="/perfil" element={<Profile />} />
-          <Route path="/perfil/senha" element={<ChangePassword />} />
+          <Route path="/app/dashboard" element={<Dashboard />} />
+          <Route path="/app/transacoes" element={<Transactions />} />
+          <Route path="/app/categorias" element={<Categories />} />
+          <Route path="/app/perfil" element={<Profile />} />
+          <Route path="/app/perfil/senha" element={<ChangePassword />} />
         </Route>
       </Route>
 

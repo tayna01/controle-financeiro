@@ -7,7 +7,7 @@ export function Categories() {
         title="Categorias"
         description="Organize as categorias dos seus lançamentos"
         breadcrumbs={[
-          { label: 'Início', to: '/dashboard' },
+          { label: 'Início', to: '/app/dashboard' },
           { label: 'Categorias' },
         ]}
       />

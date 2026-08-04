@@ -37,7 +37,7 @@ export function Login() {
   } = useForm<LoginData>({ resolver: zodResolver(loginSchema) })
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />
+    return <Navigate to="/app/dashboard" replace />
   }
 
   async function onSubmit(data: LoginData) {
@@ -46,7 +46,7 @@ export function Login() {
     setSuccessMessage(null)
     try {
       await login(data.email, data.senha)
-      navigate('/dashboard', { replace: true })
+      navigate('/app/dashboard', { replace: true })
     } catch (error) {
       setAuthError(error instanceof Error ? error.message : 'Falha ao entrar')
       setLoading(false)
