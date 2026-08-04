@@ -9,6 +9,7 @@ import { Login } from '@/pages/Login'
 import { Profile } from '@/pages/Profile'
 import { Register } from '@/pages/Register'
 import { ResetPassword } from '@/pages/ResetPassword'
+import { Settings } from '@/pages/Settings'
 import { Transactions } from '@/pages/Transactions'
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/app/dashboard" element={<Dashboard />} />
           <Route path="/app/transacoes" element={<Transactions />} />
           <Route path="/app/categorias" element={<Categories />} />
+          <Route path="/app/configuracoes" element={<Settings />} />
           <Route path="/app/perfil" element={<Profile />} />
           <Route path="/app/perfil/senha" element={<ChangePassword />} />
         </Route>
