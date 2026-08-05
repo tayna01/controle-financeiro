@@ -33,7 +33,7 @@ Este repositório reúne as duas partes do projeto final da disciplina de Progra
 | Lucide React | Ícones |
 | Prettier + ESLint | Formatação e qualidade de código |
 
-**Back-end** — Spring Boot 3.5 (JPA, Security, Validation) + PostgreSQL (em desenvolvimento).
+**Back-end** — Spring Boot 3.5 (JPA, Security, Validation) + MySQL/MariaDB (em desenvolvimento).
 
 ## Estrutura do código
 
@@ -84,7 +84,7 @@ npm run dev
 
 A aplicação abre em `http://localhost:5173`.
 
-**Back-end** (requer PostgreSQL em `localhost:5432`, banco `backend`)
+**Back-end** (requer MySQL/MariaDB via XAMPP em `localhost:3306`, banco `financeiro` criado automaticamente)
 
 ```bash
 cd back-end
