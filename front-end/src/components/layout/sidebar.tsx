@@ -7,8 +7,8 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Settings,
   Tags,
-  UserRound,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/contexts/auth-context'
@@ -30,7 +30,7 @@ const NAV_ITEMS = [
   },
   { to: '/app/transacoes', label: 'Transações', icon: ArrowLeftRight },
   { to: '/app/categorias', label: 'Categorias', icon: Tags },
-  { to: '/app/perfil', label: 'Perfil', icon: UserRound },
+  { to: '/app/configuracoes', label: 'Configurações', icon: Settings },
 ]
 
 interface SidebarContentProps {
