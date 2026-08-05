@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { PasswordInput } from '@/components/ui/password-input'
+import { PasswordStrength } from '@/components/password-strength'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { passwordSchema, requiredString } from '@/lib/validation'
@@ -29,8 +30,11 @@ export function ResetPassword() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<ResetPasswordData>({ resolver: zodResolver(resetPasswordSchema) })
+
+  const senha = useWatch({ control, name: 'senha', defaultValue: '' })
 
   const tokenInvalido = !token
 
@@ -111,6 +115,7 @@ export function ResetPassword() {
                       {errors.senha.message}
                     </p>
                   )}
+                  <PasswordStrength password={senha} />
                 </div>
 
                 <div className="space-y-2">
