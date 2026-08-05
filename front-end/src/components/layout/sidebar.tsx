@@ -124,7 +124,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
       <button
         onClick={onToggleCollapse}
         title={collapsed ? 'Expandir menu' : 'Recolher menu'}
-        className="absolute right-0 top-1/2 z-10 flex size-6 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full border border-border bg-surface text-muted shadow-sm transition-colors hover:text-primary"
+        className="absolute right-0 top-1/2 z-10 flex size-6 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full border border-border bg-surface text-muted shadow-sm transition-[color] hover:text-primary"
       >
         {collapsed ? (
           <ChevronsRight className="size-4" />
