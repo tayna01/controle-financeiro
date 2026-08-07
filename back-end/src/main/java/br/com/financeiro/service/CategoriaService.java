@@ -70,7 +70,7 @@ public class CategoriaService {
     }
 
     private void verificarNomeDuplicado(Long usuarioId, String nome, Long idIgnorar) {
-        if (categoriaRepository.existsByUsuarioIdAndNomeIgnoreCase(usuarioId, nome)) {
+        if (categoriaRepository.existsByUsuarioIdAndNomeIgnoreCase(usuarioId, nome, idIgnorar)) {
             throw new ConflictException("Já existe uma categoria com este nome");
         }
     }
