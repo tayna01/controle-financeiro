@@ -28,6 +28,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ApiError> handleConflict(ConflictException ex) {
+        return build(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiError> handleAccessDenied(AccessDeniedException ex) {
         return build(HttpStatus.FORBIDDEN, "Acesso negado");

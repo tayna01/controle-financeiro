@@ -5,10 +5,15 @@ import br.com.financeiro.entity.TipoTransacao;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
 
-    List<Categoria> findByUsuarioId(Long usuarioId);
+    List<Categoria> findByUsuarioIdOrderByNomeAsc(Long usuarioId);
 
-    List<Categoria> findByUsuarioIdAndTipo(Long usuarioId, TipoTransacao tipo);
+    List<Categoria> findByUsuarioIdAndTipoOrderByNomeAsc(Long usuarioId, TipoTransacao tipo);
+
+    Optional<Categoria> findByIdAndUsuarioId(Long id, Long usuarioId);
+
+    boolean existsByUsuarioIdAndNomeIgnoreCase(Long usuarioId, String nome);
 }
