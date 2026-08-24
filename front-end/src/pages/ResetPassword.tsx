@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { isAxiosError } from 'axios'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -9,6 +10,8 @@ import { PasswordInput } from '@/components/ui/password-input'
 import { PasswordStrength } from '@/components/password-strength'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { resetPassword } from '@/services/auth'
+import { getApiErrorMessage } from '@/lib/api'
 import { passwordSchema, requiredString } from '@/lib/validation'
 
 const resetPasswordSchema = z
@@ -27,6 +30,7 @@ export function ResetPassword() {
   const { token } = useParams<{ token: string }>()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
   const {
     register,
     handleSubmit,
@@ -38,14 +42,24 @@ export function ResetPassword() {
 
   const tokenInvalido = !token
 
-  function onSubmit() {
+  async function onSubmit(data: ResetPasswordData) {
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
+    setFormError(null)
+    try {
+      await resetPassword(token as string, data.senha)
       navigate('/login', {
         state: { successMessage: 'Senha redefinida com sucesso. Faça login.' },
       })
-    }, 1200)
+    } catch (error) {
+      setLoading(false)
+      if (isAxiosError(error) && error.response?.status === 400) {
+        setFormError(
+          'Link inválido ou expirado. Solicite um novo link para continuar.',
+        )
+        return
+      }
+      setFormError(getApiErrorMessage(error, 'Falha ao redefinir a senha'))
+    }
   }
 
   return (
@@ -142,6 +156,12 @@ export function ResetPassword() {
                   {loading ? 'Salvando...' : 'Redefinir senha'}
                 </Button>
               </form>
+
+              {formError && (
+                <p className="mt-4 rounded-xl bg-expense/10 px-4 py-3 text-sm text-expense">
+                  {formError}
+                </p>
+              )}
             </>
           )}
         </div>

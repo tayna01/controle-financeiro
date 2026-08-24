@@ -17,13 +17,7 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
 
     Optional<Categoria> findByIdAndUsuarioId(Long id, Long usuarioId);
 
-    @Query("""
-            SELECT COUNT(c) > 0
-            FROM Categoria c
-            WHERE c.usuario.id = :usuarioId
-              AND LOWER(c.nome) = LOWER(:nome)
-              AND (:id IS NULL OR c.id <> :id)
-            """)
+    @Query("SELECT COUNT(c) > 0 FROM Categoria c WHERE c.usuario.id = :usuarioId AND LOWER(c.nome) = LOWER(:nome) AND (:id IS NULL OR c.id <> :id)")
     boolean existsByUsuarioIdAndNomeIgnoreCase(@Param("usuarioId") Long usuarioId,
                                                @Param("nome") String nome,
                                                @Param("id") Long idIgnorar);

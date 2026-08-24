@@ -11,11 +11,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
+@Data
+@EqualsAndHashCode(callSuper = true)
 @Table(name = "transacao")
 public class Transacao extends Base {
 
@@ -47,64 +51,4 @@ public class Transacao extends Base {
 
     @Column(nullable = false)
     private LocalDate data;
-
-    public Long getId() {
-        return id;
-    }
-
-    public Carteira getCarteira() {
-        return carteira;
-    }
-
-    public void setCarteira(Carteira carteira) {
-        this.carteira = carteira;
-    }
-
-    public Categoria getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(Categoria categoria) {
-        this.categoria = categoria;
-    }
-
-    public Usuario getCriadoPor() {
-        return criadoPor;
-    }
-
-    public void setCriadoPor(Usuario criadoPor) {
-        this.criadoPor = criadoPor;
-    }
-
-    public TipoTransacao getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(TipoTransacao tipo) {
-        this.tipo = tipo;
-    }
-
-    public BigDecimal getValor() {
-        return valor;
-    }
-
-    public void setValor(BigDecimal valor) {
-        this.valor = valor;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public LocalDate getData() {
-        return data;
-    }
-
-    public void setData(LocalDate data) {
-        this.data = data;
-    }
 }

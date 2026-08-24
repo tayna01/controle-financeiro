@@ -7,6 +7,7 @@ import br.com.financeiro.entity.Usuario;
 import br.com.financeiro.security.CurrentUserProvider;
 import br.com.financeiro.service.CategoriaService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,13 +26,11 @@ import java.util.List;
 @RequestMapping("/api/v1/categories")
 public class CategoriaController {
 
-    private final CategoriaService categoriaService;
-    private final CurrentUserProvider currentUserProvider;
+    @Autowired
+    private CategoriaService categoriaService;
 
-    public CategoriaController(CategoriaService categoriaService, CurrentUserProvider currentUserProvider) {
-        this.categoriaService = categoriaService;
-        this.currentUserProvider = currentUserProvider;
-    }
+    @Autowired
+    private CurrentUserProvider currentUserProvider;
 
     @GetMapping
     public List<CategoryResponse> list(@RequestParam(value = "type", required = false) TransactionType type) {

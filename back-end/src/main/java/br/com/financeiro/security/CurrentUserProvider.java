@@ -1,39 +1,31 @@
 package br.com.financeiro.security;
 
-import br.com.financeiro.entity.Usuario;
-import br.com.financeiro.repository.UsuarioRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
+import br.com.financeiro.entity.Usuario;
+import br.com.financeiro.exception.ResourceNotFoundException;
+import br.com.financeiro.repository.UsuarioRepository;
 
-/**
- * Sem JWT (Fase 5), todos os CRUDs operam com um usuário de desenvolvimento fixo.
- * Quando a autenticação for implementada, este provedor deve ler o SecurityContext.
- */
 @Component
 public class CurrentUserProvider {
 
-    private static final String DEV_EMAIL = "dev@financeiro.local";
-
-    private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    public CurrentUserProvider(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
-        this.usuarioRepository = usuarioRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     public Usuario getCurrentUser() {
-        return usuarioRepository.findByEmailIgnoreCase(DEV_EMAIL)
-                .orElseGet(this::criarUsuarioDev);
-    }
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
 
-    private Usuario criarUsuarioDev() {
-        Usuario usuario = new Usuario();
-        usuario.setNome("Usuário de Desenvolvimento");
-        usuario.setEmail(DEV_EMAIL);
-        usuario.setSenhaCriptografada(passwordEncoder.encode(UUID.randomUUID().toString()));
-        return usuarioRepository.save(usuario);
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+
+        return usuarioRepository.findByEmailIgnoreCase(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário autenticado não encontrado"));
     }
 }

@@ -1,3 +1,5 @@
+import { api, getApiErrorMessage } from '@/lib/api'
+
 const TOKEN_KEY = 'token'
 const USER_KEY = 'user'
 
@@ -6,34 +8,47 @@ export interface SessionUser {
   email: string
 }
 
-interface MockUser {
+interface UserResponse {
+  id: number
+  name: string
   email: string
-  senha: string
-  nome: string
+  createdAt: string
 }
 
-const MOCK_USERS: MockUser[] = [
-  { email: 'usuario@exemplo.com', senha: '123456', nome: 'Tayná Vicente' },
-  { email: 'teste@exemplo.com', senha: '123456', nome: 'Teste' },
-]
+interface AuthResponse {
+  accessToken: string
+  tokenType: string
+  expiresIn: number
+}
 
-export function login(email: string, senha: string): Promise<SessionUser> {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const user = MOCK_USERS.find(
-        (mock) => mock.email === email.toLowerCase() && mock.senha === senha,
-      )
+function toSessionUser(response: UserResponse): SessionUser {
+  return { nome: response.name, email: response.email }
+}
 
-      if (!user) {
-        reject(new Error('E-mail ou senha inválidos'))
-        return
-      }
+export async function login(email: string, senha: string): Promise<SessionUser> {
+  try {
+    const { data } = await api.post<AuthResponse>('/auth/login', {
+      email,
+      password: senha,
+    })
+    localStorage.setItem(TOKEN_KEY, data.accessToken)
 
-      const sessionUser: SessionUser = { nome: user.nome, email: user.email }
-      localStorage.setItem(TOKEN_KEY, `mock-token-${user.email}`)
-      localStorage.setItem(USER_KEY, JSON.stringify(sessionUser))
-      resolve(sessionUser)
-    }, 1200)
+    const profile = await api.get<UserResponse>('/api/v1/users/me')
+    const sessionUser = toSessionUser(profile.data)
+    localStorage.setItem(USER_KEY, JSON.stringify(sessionUser))
+    return sessionUser
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'E-mail ou senha inválidos'), {
+      cause: error,
+    })
+  }
+}
+
+export async function register(nome: string, email: string, senha: string): Promise<void> {
+  await api.post<UserResponse>('/auth/register', {
+    name: nome,
+    email,
+    password: senha,
   })
 }
 
@@ -56,28 +71,36 @@ export function logout(): void {
   localStorage.removeItem(USER_KEY)
 }
 
-export function changePassword(
+export async function changePassword(
   currentPassword: string,
   newPassword: string,
 ): Promise<void> {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const sessionUser = getCurrentUser()
+  try {
+    await api.patch('/api/v1/users/me/password', {
+      currentPassword,
+      newPassword,
+    })
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Falha ao alterar senha'), {
+      cause: error,
+    })
+  }
+}
 
-      if (!sessionUser) {
-        reject(new Error('Sessão inválida. Faça login novamente.'))
-        return
-      }
+export async function forgotPassword(
+  email: string,
+): Promise<{ message: string; debugToken?: string }> {
+  const { data } = await api.post<{
+    message: string
+    debugToken?: string
+  }>('/auth/forgot-password', { email })
+  return data
+}
 
-      const user = MOCK_USERS.find((mock) => mock.email === sessionUser.email)
-
-      if (!user || user.senha !== currentPassword) {
-        reject(new Error('A senha atual está incorreta'))
-        return
-      }
-
-      user.senha = newPassword
-      resolve()
-    }, 1200)
+export async function resetPassword(token: string, newPassword: string): Promise<string> {
+  const { data } = await api.post<{ message: string }>('/auth/reset-password', {
+    token,
+    newPassword,
   })
+  return data.message
 }

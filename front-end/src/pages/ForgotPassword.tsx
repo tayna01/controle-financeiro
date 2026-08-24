@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { forgotPassword } from '@/services/auth'
+import { getApiErrorMessage } from '@/lib/api'
 import { emailSchema } from '@/lib/validation'
 
 const forgotPasswordSchema = z.object({
@@ -19,6 +21,8 @@ type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>
 export function ForgotPassword() {
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
+  const [resetToken, setResetToken] = useState<string | null>(null)
+  const [formError, setFormError] = useState<string | null>(null)
   const {
     register,
     handleSubmit,
@@ -27,12 +31,20 @@ export function ForgotPassword() {
     resolver: zodResolver(forgotPasswordSchema),
   })
 
-  function onSubmit() {
+  async function onSubmit(data: ForgotPasswordData) {
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
+    setFormError(null)
+    try {
+      const response = await forgotPassword(data.email)
+      setResetToken(response.debugToken ?? null)
       setSent(true)
-    }, 1200)
+    } catch (error) {
+      setFormError(
+        getApiErrorMessage(error, 'Não foi possível enviar o link. Tente novamente.'),
+      )
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -58,22 +70,33 @@ export function ForgotPassword() {
                 redefinição para você.
               </p>
 
-              <div className="mt-8 rounded-xl bg-primary/10 px-4 py-3 text-sm text-primary">
-                Link simulado (apenas para teste):
-                <br />
-                <Link
-                  to="/redefinir-senha/token-demo"
-                  className="font-semibold underline"
-                >
-                  /redefinir-senha/token-demo
-                </Link>
-              </div>
+              {resetToken && (
+                <div className="mt-8 rounded-xl bg-primary/10 px-4 py-3 text-sm text-primary">
+                  Link de redefinição (ambiente de teste):
+                  <br />
+                  <Link
+                    to={`/redefinir-senha/${resetToken}`}
+                    className="font-semibold break-all underline"
+                  >
+                    /redefinir-senha/{resetToken}
+                  </Link>
+                </div>
+              )}
+
+              {formError && (
+                <p className="mt-4 rounded-xl bg-expense/10 px-4 py-3 text-sm text-expense">
+                  {formError}
+                </p>
+              )}
 
               <Button
                 type="button"
                 size="lg"
                 className="mt-4 w-full"
-                onClick={() => setSent(false)}
+                onClick={() => {
+                  setSent(false)
+                  setResetToken(null)
+                }}
               >
                 Enviar novamente
               </Button>
@@ -116,6 +139,12 @@ export function ForgotPassword() {
                   {loading ? 'Enviando...' : 'Enviar link'}
                 </Button>
               </form>
+
+              {formError && (
+                <p className="mt-4 rounded-xl bg-expense/10 px-4 py-3 text-sm text-expense">
+                  {formError}
+                </p>
+              )}
             </>
           )}
 

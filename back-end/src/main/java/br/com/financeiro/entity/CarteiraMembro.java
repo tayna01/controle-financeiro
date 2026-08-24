@@ -13,10 +13,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Data
+@EqualsAndHashCode(callSuper = true)
 @Table(name = "carteira_membro", uniqueConstraints = {
         @UniqueConstraint(name = "uk_carteira_usuario", columnNames = { "carteira_id", "usuario_id" })
 })
@@ -44,37 +48,5 @@ public class CarteiraMembro extends Base {
     @PrePersist
     protected void onEntrar() {
         entradoEm = LocalDateTime.now();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Carteira getCarteira() {
-        return carteira;
-    }
-
-    public void setCarteira(Carteira carteira) {
-        this.carteira = carteira;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public PapelCarteira getPapel() {
-        return papel;
-    }
-
-    public void setPapel(PapelCarteira papel) {
-        this.papel = papel;
-    }
-
-    public LocalDateTime getEntradoEm() {
-        return entradoEm;
     }
 }

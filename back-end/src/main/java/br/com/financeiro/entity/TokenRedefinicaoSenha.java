@@ -9,10 +9,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Data
+@EqualsAndHashCode(callSuper = true)
 @Table(name = "token_redefinicao_senha")
 public class TokenRedefinicaoSenha extends Base {
 
@@ -32,40 +36,4 @@ public class TokenRedefinicaoSenha extends Base {
 
     @Column(nullable = false)
     private boolean utilizado;
-
-    public Long getId() {
-        return id;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public LocalDateTime getExpiraEm() {
-        return expiraEm;
-    }
-
-    public void setExpiraEm(LocalDateTime expiraEm) {
-        this.expiraEm = expiraEm;
-    }
-
-    public boolean isUtilizado() {
-        return utilizado;
-    }
-
-    public void setUtilizado(boolean utilizado) {
-        this.utilizado = utilizado;
-    }
 }

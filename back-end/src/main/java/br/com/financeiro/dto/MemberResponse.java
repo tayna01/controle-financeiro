@@ -2,11 +2,18 @@ package br.com.financeiro.dto;
 
 import java.time.LocalDateTime;
 
-public record MemberResponse(
-        Long userId,
-        String name,
-        String email,
-        String role,
-        LocalDateTime joinedAt
-) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class MemberResponse {
+
+    private Long userId;
+    private String name;
+    private String email;
+    private String role;
+    private LocalDateTime joinedAt;
 }

@@ -9,6 +9,7 @@ import br.com.financeiro.entity.Usuario;
 import br.com.financeiro.security.CurrentUserProvider;
 import br.com.financeiro.service.CarteiraService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,13 +28,11 @@ import java.util.List;
 @RequestMapping("/api/v1/wallets")
 public class CarteiraController {
 
-    private final CarteiraService carteiraService;
-    private final CurrentUserProvider currentUserProvider;
+    @Autowired
+    private CarteiraService carteiraService;
 
-    public CarteiraController(CarteiraService carteiraService, CurrentUserProvider currentUserProvider) {
-        this.carteiraService = carteiraService;
-        this.currentUserProvider = currentUserProvider;
-    }
+    @Autowired
+    private CurrentUserProvider currentUserProvider;
 
     @GetMapping
     public List<WalletResponse> list() {

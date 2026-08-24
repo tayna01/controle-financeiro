@@ -12,8 +12,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
+@Data
+@EqualsAndHashCode(callSuper = true)
 @Table(name = "categoria", uniqueConstraints = {
         @UniqueConstraint(name = "uk_categoria_usuario_nome", columnNames = { "usuario_id", "nome" })
 })
@@ -39,48 +43,4 @@ public class Categoria extends Base {
 
     @Column(length = 50)
     private String icone;
-
-    public Long getId() {
-        return id;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public TipoTransacao getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(TipoTransacao tipo) {
-        this.tipo = tipo;
-    }
-
-    public String getCor() {
-        return cor;
-    }
-
-    public void setCor(String cor) {
-        this.cor = cor;
-    }
-
-    public String getIcone() {
-        return icone;
-    }
-
-    public void setIcone(String icone) {
-        this.icone = icone;
-    }
 }

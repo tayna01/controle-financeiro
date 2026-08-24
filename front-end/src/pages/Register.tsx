@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { isAxiosError } from 'axios'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,6 +12,7 @@ import { PasswordStrength } from '@/components/password-strength'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { cn } from '@/lib/utils'
+import { register as registerAccount } from '@/services/auth'
 import { emailSchema, passwordSchema, requiredString } from '@/lib/validation'
 
 const registerSchema = z
@@ -41,6 +43,7 @@ const STEPS: { title: string; fields: (keyof RegisterData)[] }[] = [
 export function Register() {
   const [step, setStep] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
   const navigate = useNavigate()
   const {
     register,
@@ -56,20 +59,27 @@ export function Register() {
 
   const senha = useWatch({ control, name: 'senha', defaultValue: '' })
 
-  const MOCK_EMAILS_CADASTRADOS = ['usuario@exemplo.com', 'teste@exemplo.com']
-
   const isLastStep = step === STEPS.length - 1
 
   async function handleNext() {
     const valid = await trigger(STEPS[step].fields)
-    if (valid) setStep((current) => current + 1)
+    if (valid) {
+      setFormError(null)
+      setStep((current) => current + 1)
+    }
   }
 
-  function onSubmit(data: RegisterData) {
+  async function onSubmit(data: RegisterData) {
     setLoading(true)
-    setTimeout(() => {
+    setFormError(null)
+    try {
+      await registerAccount(data.nome, data.email, data.senha)
+      navigate('/login', {
+        state: { successMessage: 'Conta criada com sucesso. Faça login.' },
+      })
+    } catch (error) {
       setLoading(false)
-      if (MOCK_EMAILS_CADASTRADOS.includes(data.email.toLowerCase())) {
+      if (isAxiosError(error) && error.response?.status === 409) {
         setStep(0)
         setError('email', {
           type: 'manual',
@@ -77,10 +87,8 @@ export function Register() {
         })
         return
       }
-      navigate('/login', {
-        state: { successMessage: 'Conta criada com sucesso. Faça login.' },
-      })
-    }, 1200)
+      setFormError('Falha ao criar conta. Tente novamente.')
+    }
   }
 
   return (
@@ -224,6 +232,12 @@ export function Register() {
               )}
             </div>
           </form>
+
+          {formError && (
+            <p className="mt-4 rounded-xl bg-expense/10 px-4 py-3 text-sm text-expense">
+              {formError}
+            </p>
+          )}
 
           <p className="mt-8 text-center text-sm text-muted">
             Já tem uma conta?{' '}

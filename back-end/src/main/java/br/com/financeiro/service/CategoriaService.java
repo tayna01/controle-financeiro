@@ -1,5 +1,12 @@
 package br.com.financeiro.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import br.com.financeiro.dto.CategoryRequest;
 import br.com.financeiro.dto.CategoryResponse;
 import br.com.financeiro.dto.TransactionType;
@@ -10,34 +17,32 @@ import br.com.financeiro.exception.ConflictException;
 import br.com.financeiro.exception.ResourceNotFoundException;
 import br.com.financeiro.repository.CategoriaRepository;
 import br.com.financeiro.repository.TransacaoRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class CategoriaService {
 
-    private final CategoriaRepository categoriaRepository;
-    private final TransacaoRepository transacaoRepository;
+    @Autowired
+    private CategoriaRepository categoriaRepository;
 
-    public CategoriaService(CategoriaRepository categoriaRepository,
-                            TransacaoRepository transacaoRepository) {
-        this.categoriaRepository = categoriaRepository;
-        this.transacaoRepository = transacaoRepository;
-    }
+    @Autowired
+    private TransacaoRepository transacaoRepository;
 
-@Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<CategoryResponse> list(Usuario usuario, TransactionType type) {
         List<Categoria> categorias = (type == null)
                 ? categoriaRepository.findByUsuarioIdOrderByNomeAsc(usuario.getId())
                 : categoriaRepository.findByUsuarioIdAndTipoOrderByNomeAsc(usuario.getId(), type.toEntity());
-        return categorias.stream().map(this::toResponse).toList();
+
+        List<CategoryResponse> resposta = new ArrayList<>();
+        for (Categoria categoria : categorias) {
+            resposta.add(toResponse(categoria));
+        }
+        return resposta;
     }
 
     @Transactional
     public CategoryResponse create(Usuario usuario, CategoryRequest request) {
-        verificarNomeDuplicado(usuario.getId(), request.name(), null);
+        verificarNomeDuplicado(usuario.getId(), request.getName(), null);
 
         Categoria categoria = new Categoria();
         categoria.setUsuario(usuario);
@@ -49,7 +54,7 @@ public class CategoriaService {
     @Transactional
     public CategoryResponse update(Usuario usuario, Long id, CategoryRequest request) {
         Categoria categoria = buscar(usuario, id);
-        verificarNomeDuplicado(usuario.getId(), request.name(), id);
+        verificarNomeDuplicado(usuario.getId(), request.getName(), id);
 
         aplicar(categoria, request);
         return toResponse(categoriaRepository.save(categoria));
@@ -76,10 +81,10 @@ public class CategoriaService {
     }
 
     private void aplicar(Categoria categoria, CategoryRequest request) {
-        categoria.setNome(request.name());
-        categoria.setTipo(TransactionType.valueOf(request.type()).toEntity());
-        categoria.setCor(request.color());
-        categoria.setIcone(request.icon());
+        categoria.setNome(request.getName());
+        categoria.setTipo(TransactionType.valueOf(request.getType()).toEntity());
+        categoria.setCor(request.getColor());
+        categoria.setIcone(request.getIcon());
     }
 
     private CategoryResponse toResponse(Categoria categoria) {

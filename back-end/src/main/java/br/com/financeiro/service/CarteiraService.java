@@ -1,5 +1,13 @@
 package br.com.financeiro.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import br.com.financeiro.dto.MemberRequest;
 import br.com.financeiro.dto.MemberResponse;
 import br.com.financeiro.dto.MemberRoleRequest;
@@ -15,32 +23,27 @@ import br.com.financeiro.exception.ResourceNotFoundException;
 import br.com.financeiro.repository.CarteiraMembroRepository;
 import br.com.financeiro.repository.CarteiraRepository;
 import br.com.financeiro.repository.UsuarioRepository;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class CarteiraService {
 
-    private final CarteiraRepository carteiraRepository;
-    private final CarteiraMembroRepository membroRepository;
-    private final UsuarioRepository usuarioRepository;
+    @Autowired
+    private CarteiraRepository carteiraRepository;
 
-    public CarteiraService(CarteiraRepository carteiraRepository,
-                           CarteiraMembroRepository membroRepository,
-                           UsuarioRepository usuarioRepository) {
-        this.carteiraRepository = carteiraRepository;
-        this.membroRepository = membroRepository;
-        this.usuarioRepository = usuarioRepository;
-    }
+    @Autowired
+    private CarteiraMembroRepository membroRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Transactional(readOnly = true)
     public List<WalletResponse> list(Usuario usuario) {
-        return carteiraRepository.findByUsuarioId(usuario.getId()).stream()
-                .map(this::toWalletResponse)
-                .toList();
+        List<Carteira> carteiras = carteiraRepository.findByUsuarioId(usuario.getId());
+        List<WalletResponse> resposta = new ArrayList<>();
+        for (Carteira carteira : carteiras) {
+            resposta.add(toWalletResponse(carteira));
+        }
+        return resposta;
     }
 
     @Transactional(readOnly = true)
@@ -52,8 +55,8 @@ public class CarteiraService {
     public WalletResponse create(Usuario usuario, WalletRequest request) {
         Carteira carteira = new Carteira();
         carteira.setDono(usuario);
-        carteira.setNome(request.name());
-        carteira.setDescricao(request.description());
+        carteira.setNome(request.getName());
+        carteira.setDescricao(request.getDescription());
         carteira = carteiraRepository.save(carteira);
 
         CarteiraMembro dono = new CarteiraMembro();
@@ -70,8 +73,8 @@ public class CarteiraService {
         Carteira carteira = buscarComAcesso(usuario, id);
         exigirDono(carteira, usuario);
 
-        carteira.setNome(request.name());
-        carteira.setDescricao(request.description());
+        carteira.setNome(request.getName());
+        carteira.setDescricao(request.getDescription());
         return toWalletResponse(carteiraRepository.save(carteira));
     }
 
@@ -93,7 +96,7 @@ public class CarteiraService {
         Carteira carteira = buscarComAcesso(usuario, carteiraId);
         exigirDono(carteira, usuario);
 
-        Usuario convidado = usuarioRepository.findByEmailIgnoreCase(request.email())
+        Usuario convidado = usuarioRepository.findByEmailIgnoreCase(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o e-mail informado"));
 
         if (membroRepository.existsByCarteiraIdAndUsuarioId(carteiraId, convidado.getId())) {
@@ -103,7 +106,7 @@ public class CarteiraService {
         CarteiraMembro membro = new CarteiraMembro();
         membro.setCarteira(carteira);
         membro.setUsuario(convidado);
-        membro.setPapel(request.role());
+        membro.setPapel(request.getRole());
         return toMemberResponse(membroRepository.save(membro));
     }
 
@@ -116,7 +119,7 @@ public class CarteiraService {
         if (membro.getPapel() == PapelCarteira.DONO) {
             throw new BusinessException("Não é possível alterar o papel do dono da carteira");
         }
-        membro.setPapel(request.role());
+        membro.setPapel(request.getRole());
         return toMemberResponse(membroRepository.save(membro));
     }
 
@@ -156,9 +159,12 @@ public class CarteiraService {
     }
 
     private List<MemberResponse> listMembros(Long carteiraId) {
-        return membroRepository.findByCarteiraIdOrderByEntradoEmAsc(carteiraId).stream()
-                .map(this::toMemberResponse)
-                .toList();
+        List<CarteiraMembro> membros = membroRepository.findByCarteiraIdOrderByEntradoEmAsc(carteiraId);
+        List<MemberResponse> resposta = new ArrayList<>();
+        for (CarteiraMembro membro : membros) {
+            resposta.add(toMemberResponse(membro));
+        }
+        return resposta;
     }
 
     private MemberResponse toMemberResponse(CarteiraMembro membro) {
@@ -174,10 +180,14 @@ public class CarteiraService {
 
     private WalletResponse toWalletResponse(Carteira carteira) {
         List<MemberResponse> membros = listMembros(carteira.getId());
-        MemberResponse dono = membros.stream()
-                .filter(m -> "DONO".equals(m.role()))
-                .findFirst()
-                .orElseGet(() -> ownerFallback(carteira));
+
+        MemberResponse dono = ownerFallback(carteira);
+        for (MemberResponse membro : membros) {
+            if ("DONO".equals(membro.getRole())) {
+                dono = membro;
+                break;
+            }
+        }
 
         return new WalletResponse(
                 carteira.getId(),

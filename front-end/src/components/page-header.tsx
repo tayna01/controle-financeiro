@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { ChevronRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
@@ -11,6 +12,7 @@ interface PageHeaderProps {
   title: string
   description?: string
   breadcrumbs?: BreadcrumbItem[]
+  actions?: ReactNode
   className?: string
 }
 
@@ -18,6 +20,7 @@ export function PageHeader({
   title,
   description,
   breadcrumbs = [],
+  actions,
   className,
 }: PageHeaderProps) {
   return (
@@ -45,11 +48,14 @@ export function PageHeader({
         })}
       </div>
 
-      <div>
-        <h1 className="text-2xl font-bold">{title}</h1>
-        {description && (
-          <p className="mt-1 text-sm text-muted">{description}</p>
-        )}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold">{title}</h1>
+          {description && (
+            <p className="mt-1 text-sm text-muted">{description}</p>
+          )}
+        </div>
+        {actions && <div className="flex items-center gap-2">{actions}</div>}
       </div>
     </header>
   )

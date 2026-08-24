@@ -11,11 +11,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Data
+@EqualsAndHashCode(callSuper = true)
 @Table(name = "carteira")
 public class Carteira extends Base {
 
@@ -33,45 +38,11 @@ public class Carteira extends Base {
     @Column(length = 255)
     private String descricao;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "carteira", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CarteiraMembro> membros = new ArrayList<>();
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "carteira", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transacao> transacoes = new ArrayList<>();
-
-    public Long getId() {
-        return id;
-    }
-
-    public Usuario getDono() {
-        return dono;
-    }
-
-    public void setDono(Usuario dono) {
-        this.dono = dono;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public List<CarteiraMembro> getMembros() {
-        return membros;
-    }
-
-    public List<Transacao> getTransacoes() {
-        return transacoes;
-    }
 }
