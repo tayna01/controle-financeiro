@@ -131,7 +131,7 @@ export async function fetchSummary(
 
 export async function createTransaction(input: TransactionInput): Promise<void> {
   const walletId = await resolveWalletId()
-  await api.post(`/api/v1/wallets/${walletId}/transactions`, input)
+  await api.post(`/api/v1/wallets/${walletId}/transactions`, toRequestPayload(input))
 }
 
 export async function updateTransaction(
@@ -139,7 +139,17 @@ export async function updateTransaction(
   input: TransactionInput,
 ): Promise<void> {
   const walletId = await resolveWalletId()
-  await api.put(`/api/v1/wallets/${walletId}/transactions/${id}`, input)
+  await api.put(`/api/v1/wallets/${walletId}/transactions/${id}`, toRequestPayload(input))
+}
+
+function toRequestPayload(input: TransactionInput) {
+  return {
+    type: input.type.toUpperCase(),
+    amount: input.amount,
+    description: input.description || null,
+    date: input.date,
+    categoryId: input.categoryId ?? null,
+  }
 }
 
 export async function deleteTransaction(id: string): Promise<void> {
