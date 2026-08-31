@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
-  Settings,
   Tags,
   UserRound,
 } from 'lucide-react'
@@ -31,7 +30,6 @@ const NAV_ITEMS = [
   },
   { to: '/app/transacoes', label: 'Transações', icon: ArrowLeftRight },
   { to: '/app/categorias', label: 'Categorias', icon: Tags },
-  { to: '/app/configuracoes', label: 'Configurações', icon: Settings },
   { to: '/app/perfil', label: 'Perfil', icon: UserRound },
 ]
 
@@ -40,7 +38,10 @@ interface SidebarContentProps {
   onNavigate?: () => void
 }
 
-function SidebarContent({ collapsed = false, onNavigate }: SidebarContentProps) {
+function SidebarContent({
+  collapsed = false,
+  onNavigate,
+}: SidebarContentProps) {
   const navigate = useNavigate()
   const { logout } = useAuth()
 
@@ -92,7 +93,9 @@ function SidebarContent({ collapsed = false, onNavigate }: SidebarContentProps) 
 
       <Separator />
 
-      <div className={cn('py-4', collapsed ? 'flex justify-center px-2' : 'px-6')}>
+      <div
+        className={cn('py-4', collapsed ? 'flex justify-center px-2' : 'px-6')}
+      >
         <button
           className="flex items-center gap-1.5 text-xs font-semibold text-muted transition-colors hover:text-expense"
           onClick={handleLogout}

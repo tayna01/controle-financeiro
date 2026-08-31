@@ -74,8 +74,8 @@ public class CarteiraController {
 
     @PatchMapping("/{id}/members/{userId}")
     public MemberResponse updateRole(@PathVariable Long id,
-                                     @PathVariable Long userId,
-                                     @Valid @RequestBody MemberRoleRequest request) {
+            @PathVariable Long userId,
+            @Valid @RequestBody MemberRoleRequest request) {
         return carteiraService.updateRole(currentUser(), id, userId, request);
     }
 

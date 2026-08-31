@@ -1,11 +1,7 @@
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react'
 import { Card } from '@/components/ui/card'
-import {
-  formatCurrency,
-  formatDate,
-  type Transaction,
-} from '@/services/transactions'
-import { cn } from '@/lib/utils'
+import { type Transaction } from '@/services/transactions'
+import { cn, formatCurrency, formatDate } from '@/lib/utils'
 
 interface RecentTransactionsProps {
   transactions: Transaction[]

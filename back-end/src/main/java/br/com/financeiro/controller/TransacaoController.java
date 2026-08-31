@@ -38,11 +38,11 @@ public class TransacaoController {
 
     @GetMapping("/transactions")
     public Page<TransactionResponse> list(@PathVariable Long walletId,
-                                          @RequestParam(value = "type", required = false) TransactionType type,
-                                          @RequestParam(value = "categoryId", required = false) Long categoryId,
-                                          @RequestParam(value = "startDate", required = false) LocalDate startDate,
-                                          @RequestParam(value = "endDate", required = false) LocalDate endDate,
-                                          Pageable pageable) {
+            @RequestParam(value = "type", required = false) TransactionType type,
+            @RequestParam(value = "categoryId", required = false) Long categoryId,
+            @RequestParam(value = "startDate", required = false) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) LocalDate endDate,
+            Pageable pageable) {
         Usuario usuario = currentUserProvider.getCurrentUser();
         return transacaoService.list(usuario, walletId, type, categoryId, startDate, endDate, pageable);
     }
@@ -50,7 +50,7 @@ public class TransacaoController {
     @PostMapping("/transactions")
     @ResponseStatus(HttpStatus.CREATED)
     public TransactionResponse create(@PathVariable Long walletId,
-                                      @Valid @RequestBody TransactionRequest request) {
+            @Valid @RequestBody TransactionRequest request) {
         Usuario usuario = currentUserProvider.getCurrentUser();
         return transacaoService.create(usuario, walletId, request);
     }
@@ -63,8 +63,8 @@ public class TransacaoController {
 
     @PutMapping("/transactions/{id}")
     public TransactionResponse update(@PathVariable Long walletId,
-                                      @PathVariable Long id,
-                                      @Valid @RequestBody TransactionRequest request) {
+            @PathVariable Long id,
+            @Valid @RequestBody TransactionRequest request) {
         Usuario usuario = currentUserProvider.getCurrentUser();
         return transacaoService.update(usuario, walletId, id, request);
     }
@@ -78,8 +78,8 @@ public class TransacaoController {
 
     @GetMapping("/summary")
     public SummaryResponse summary(@PathVariable Long walletId,
-                                   @RequestParam(value = "startDate", required = false) LocalDate startDate,
-                                   @RequestParam(value = "endDate", required = false) LocalDate endDate) {
+            @RequestParam(value = "startDate", required = false) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) LocalDate endDate) {
         Usuario usuario = currentUserProvider.getCurrentUser();
         return transacaoService.summary(usuario, walletId, startDate, endDate);
     }

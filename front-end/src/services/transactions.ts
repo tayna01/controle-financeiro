@@ -129,9 +129,14 @@ export async function fetchSummary(
   }
 }
 
-export async function createTransaction(input: TransactionInput): Promise<void> {
+export async function createTransaction(
+  input: TransactionInput,
+): Promise<void> {
   const walletId = await resolveWalletId()
-  await api.post(`/api/v1/wallets/${walletId}/transactions`, toRequestPayload(input))
+  await api.post(
+    `/api/v1/wallets/${walletId}/transactions`,
+    toRequestPayload(input),
+  )
 }
 
 export async function updateTransaction(
@@ -139,7 +144,10 @@ export async function updateTransaction(
   input: TransactionInput,
 ): Promise<void> {
   const walletId = await resolveWalletId()
-  await api.put(`/api/v1/wallets/${walletId}/transactions/${id}`, toRequestPayload(input))
+  await api.put(
+    `/api/v1/wallets/${walletId}/transactions/${id}`,
+    toRequestPayload(input),
+  )
 }
 
 function toRequestPayload(input: TransactionInput) {
@@ -155,18 +163,4 @@ function toRequestPayload(input: TransactionInput) {
 export async function deleteTransaction(id: string): Promise<void> {
   const walletId = await resolveWalletId()
   await api.delete(`/api/v1/wallets/${walletId}/transactions/${id}`)
-}
-
-export function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  }).format(value)
-}
-
-export function formatDate(date: string): string {
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: 'short',
-  }).format(new Date(date))
 }

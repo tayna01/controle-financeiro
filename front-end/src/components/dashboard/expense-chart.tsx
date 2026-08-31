@@ -7,7 +7,8 @@ import {
   Tooltip,
 } from 'recharts'
 import { Card } from '@/components/ui/card'
-import { formatCurrency, type Transaction } from '@/services/transactions'
+import { type Transaction } from '@/services/transactions'
+import { formatCurrency } from '@/lib/utils'
 
 const COLORS = [
   '#7c3aed',

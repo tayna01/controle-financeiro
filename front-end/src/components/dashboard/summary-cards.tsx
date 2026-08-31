@@ -1,7 +1,6 @@
 import { TrendingDown, TrendingUp, Wallet } from 'lucide-react'
 import { Card } from '@/components/ui/card'
-import { formatCurrency } from '@/services/transactions'
-import { cn } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 
 interface SummaryCardsProps {
   balance: number
