@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -11,6 +11,7 @@ import { PasswordInput } from '@/components/ui/password-input'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { useAuth } from '@/contexts/auth-context'
+import { useToast } from '@/hooks/use-toast'
 import { emailSchema } from '@/lib/validation'
 
 const loginSchema = z.object({
@@ -27,18 +28,23 @@ export function Login() {
   const location = useLocation()
   const navigate = useNavigate()
   const { isAuthenticated, login } = useAuth()
+  const { toast } = useToast()
   const [loading, setLoading] = useState(false)
-  const [authError, setAuthError] = useState<string | null>(null)
-  const [successMessage, setSuccessMessage] = useState<string | null>(
-    () =>
-      (location.state as { successMessage?: string } | null)?.successMessage ??
-      null,
-  )
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginData>({ resolver: zodResolver(loginSchema) })
+
+  const successMessage = (
+    location.state as { successMessage?: string } | null
+  )?.successMessage
+
+  useEffect(() => {
+    if (successMessage) {
+      toast({ title: 'Sucesso', description: successMessage })
+    }
+  }, [successMessage, toast])
 
   if (isAuthenticated) {
     return <Navigate to="/app/dashboard" replace />
@@ -46,13 +52,16 @@ export function Login() {
 
   async function onSubmit(data: LoginData) {
     setLoading(true)
-    setAuthError(null)
-    setSuccessMessage(null)
     try {
       await login(data.email, data.senha)
       navigate('/app/dashboard', { replace: true })
     } catch (error) {
-      setAuthError(error instanceof Error ? error.message : 'Falha ao entrar')
+      toast({
+        title: 'Erro ao entrar',
+        description:
+          error instanceof Error ? error.message : 'Falha ao entrar',
+        variant: 'destructive',
+      })
       setLoading(false)
     }
   }
@@ -127,18 +136,6 @@ export function Login() {
               Entrar
             </Button>
           </form>
-
-          {authError && (
-            <p className="mt-4 rounded-xl bg-expense/10 px-4 py-3 text-sm text-expense">
-              {authError}
-            </p>
-          )}
-
-          {successMessage && (
-            <p className="mt-4 rounded-xl bg-income/10 px-4 py-3 text-sm text-income">
-              {successMessage}
-            </p>
-          )}
 
           <p className="mt-8 text-center text-sm text-muted">
             Não tem uma conta?{' '}

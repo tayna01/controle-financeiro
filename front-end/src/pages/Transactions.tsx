@@ -20,7 +20,6 @@ export function Transactions() {
     dialogOpen,
     editingTransaction,
     saving,
-    formError,
     deletingId,
     setFilterType,
     setFilterCategory,
@@ -80,7 +79,6 @@ export function Transactions() {
         editingTransaction={editingTransaction}
         categories={categories}
         saving={saving}
-        formError={formError}
         onSubmit={handleSave}
       />
     </div>

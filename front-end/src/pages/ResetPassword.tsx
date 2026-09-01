@@ -11,6 +11,7 @@ import { PasswordStrength } from '@/components/password-strength'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { resetPassword } from '@/services/auth'
+import { useToast } from '@/hooks/use-toast'
 import { getApiErrorMessage } from '@/lib/api'
 import { passwordSchema, requiredString } from '@/lib/validation'
 
@@ -30,7 +31,7 @@ export function ResetPassword() {
   const { token } = useParams<{ token: string }>()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
-  const [formError, setFormError] = useState<string | null>(null)
+  const { toast } = useToast()
   const {
     register,
     handleSubmit,
@@ -44,7 +45,6 @@ export function ResetPassword() {
 
   async function onSubmit(data: ResetPasswordData) {
     setLoading(true)
-    setFormError(null)
     try {
       await resetPassword(token as string, data.senha)
       navigate('/login', {
@@ -53,12 +53,19 @@ export function ResetPassword() {
     } catch (error) {
       setLoading(false)
       if (isAxiosError(error) && error.response?.status === 400) {
-        setFormError(
-          'Link inválido ou expirado. Solicite um novo link para continuar.',
-        )
+        toast({
+          title: 'Link inválido',
+          description:
+            'Link inválido ou expirado. Solicite um novo link para continuar.',
+          variant: 'destructive',
+        })
         return
       }
-      setFormError(getApiErrorMessage(error, 'Falha ao redefinir a senha'))
+      toast({
+        title: 'Erro ao redefinir a senha',
+        description: getApiErrorMessage(error, 'Falha ao redefinir a senha'),
+        variant: 'destructive',
+      })
     }
   }
 
@@ -156,12 +163,6 @@ export function ResetPassword() {
                   {loading ? 'Salvando...' : 'Redefinir senha'}
                 </Button>
               </form>
-
-              {formError && (
-                <p className="mt-4 rounded-xl bg-expense/10 px-4 py-3 text-sm text-expense">
-                  {formError}
-                </p>
-              )}
             </>
           )}
         </div>

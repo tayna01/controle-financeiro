@@ -13,8 +13,13 @@ import {
   fetchCategories,
   type Category,
 } from '@/services/categories'
+import { useWallet } from '@/contexts/wallet-context'
+import { getApiErrorMessage } from '@/lib/api'
+import { toast } from '@/hooks/use-toast'
 
 export function useTransactions() {
+  const { selectedWallet } = useWallet()
+  const walletId = selectedWallet?.id
   const [data, setData] = useState<TransactionPage | null>(null)
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
@@ -29,7 +34,6 @@ export function useTransactions() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
-  const [formError, setFormError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const buildFilters = useCallback((): TransactionFilters => ({
@@ -40,6 +44,7 @@ export function useTransactions() {
   }), [filterType, filterCategory, filterStartDate, filterEndDate])
 
   useEffect(() => {
+    if (!walletId) return
     let active = true
     listTransactions(buildFilters(), page, 10)
       .then((result) => {
@@ -58,7 +63,7 @@ export function useTransactions() {
     return () => {
       active = false
     }
-  }, [buildFilters, page])
+  }, [buildFilters, page, walletId])
 
   useEffect(() => {
     fetchCategories().then(setCategories).catch(() => setCategories([]))
@@ -66,19 +71,16 @@ export function useTransactions() {
 
   function openCreateDialog() {
     setEditingId(null)
-    setFormError(null)
     setDialogOpen(true)
   }
 
   function openEditDialog(transactionId: string) {
     setEditingId(transactionId)
-    setFormError(null)
     setDialogOpen(true)
   }
 
   async function handleSave(input: TransactionInput) {
     setSaving(true)
-    setFormError(null)
     try {
       if (editingId) {
         await updateTransaction(editingId, input)
@@ -88,15 +90,22 @@ export function useTransactions() {
       setDialogOpen(false)
       await reload()
     } catch (error) {
-      setFormError(
-        error instanceof Error ? error.message : 'Falha ao salvar a transação',
+      const message = getApiErrorMessage(
+        error,
+        'Falha ao salvar a transação',
       )
+      toast({
+        variant: 'destructive',
+        title: 'Não foi possível salvar a transação',
+        description: message,
+      })
     } finally {
       setSaving(false)
     }
   }
 
   async function reload() {
+    if (!walletId) return
     setLoading(true)
     try {
       const result = await listTransactions(buildFilters(), page, 10)
@@ -116,8 +125,16 @@ export function useTransactions() {
     try {
       await deleteTransaction(transactionId)
       await reload()
-    } catch {
-      window.alert('Não foi possível excluir a transação.')
+    } catch (error) {
+      const message = getApiErrorMessage(
+        error,
+        'Não foi possível excluir a transação.',
+      )
+      toast({
+        variant: 'destructive',
+        title: 'Não foi possível excluir a transação',
+        description: message,
+      })
     } finally {
       setDeletingId(null)
     }
@@ -140,7 +157,6 @@ export function useTransactions() {
     dialogOpen,
     editingTransaction,
     saving,
-    formError,
     deletingId,
     setFilterType,
     setFilterCategory,

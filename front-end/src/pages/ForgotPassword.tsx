@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { forgotPassword } from '@/services/auth'
+import { useToast } from '@/hooks/use-toast'
 import { getApiErrorMessage } from '@/lib/api'
 import { emailSchema } from '@/lib/validation'
 
@@ -22,7 +23,7 @@ export function ForgotPassword() {
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
   const [resetToken, setResetToken] = useState<string | null>(null)
-  const [formError, setFormError] = useState<string | null>(null)
+  const { toast } = useToast()
   const {
     register,
     handleSubmit,
@@ -33,15 +34,19 @@ export function ForgotPassword() {
 
   async function onSubmit(data: ForgotPasswordData) {
     setLoading(true)
-    setFormError(null)
     try {
       const response = await forgotPassword(data.email)
       setResetToken(response.debugToken ?? null)
       setSent(true)
     } catch (error) {
-      setFormError(
-        getApiErrorMessage(error, 'Não foi possível enviar o link. Tente novamente.'),
-      )
+      toast({
+        title: 'Erro ao enviar link',
+        description: getApiErrorMessage(
+          error,
+          'Não foi possível enviar o link. Tente novamente.',
+        ),
+        variant: 'destructive',
+      })
     } finally {
       setLoading(false)
     }
@@ -81,12 +86,6 @@ export function ForgotPassword() {
                     /redefinir-senha/{resetToken}
                   </Link>
                 </div>
-              )}
-
-              {formError && (
-                <p className="mt-4 rounded-xl bg-expense/10 px-4 py-3 text-sm text-expense">
-                  {formError}
-                </p>
               )}
 
               <Button
@@ -139,12 +138,6 @@ export function ForgotPassword() {
                   {loading ? 'Enviando...' : 'Enviar link'}
                 </Button>
               </form>
-
-              {formError && (
-                <p className="mt-4 rounded-xl bg-expense/10 px-4 py-3 text-sm text-expense">
-                  {formError}
-                </p>
-              )}
             </>
           )}
 

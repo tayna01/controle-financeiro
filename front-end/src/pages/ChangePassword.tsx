@@ -9,6 +9,7 @@ import { PasswordInput } from '@/components/ui/password-input'
 import { PasswordStrength } from '@/components/password-strength'
 import { PageHeader } from '@/components/page-header'
 import { changePassword } from '@/services/auth'
+import { useToast } from '@/hooks/use-toast'
 import { passwordSchema, requiredString } from '@/lib/validation'
 
 const changePasswordSchema = z
@@ -26,7 +27,7 @@ type ChangePasswordData = z.infer<typeof changePasswordSchema>
 
 export function ChangePassword() {
   const [loading, setLoading] = useState(false)
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const { toast } = useToast()
   const {
     register,
     handleSubmit,
@@ -42,10 +43,9 @@ export function ChangePassword() {
 
   async function onSubmit(data: ChangePasswordData) {
     setLoading(true)
-    setSuccessMessage(null)
     try {
       await changePassword(data.senhaAtual, data.novaSenha)
-      setSuccessMessage('Senha alterada com sucesso')
+      toast({ title: 'Senha alterada com sucesso' })
       reset()
     } catch (error) {
       setError('senhaAtual', {
@@ -128,12 +128,6 @@ export function ChangePassword() {
             Alterar senha
           </Button>
         </form>
-
-        {successMessage && (
-          <p className="mt-4 rounded-xl bg-income/10 px-4 py-3 text-sm text-income">
-            {successMessage}
-          </p>
-        )}
       </Card>
     </div>
   )

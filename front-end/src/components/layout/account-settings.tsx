@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -15,6 +14,7 @@ import { PasswordInput } from '@/components/ui/password-input'
 import { PasswordStrength } from '@/components/password-strength'
 import { useAuth } from '@/contexts/auth-context'
 import { changePassword } from '@/services/auth'
+import { useToast } from '@/hooks/use-toast'
 import { passwordSchema, requiredString } from '@/lib/validation'
 
 const changePasswordSchema = z
@@ -40,8 +40,7 @@ export function AccountSettingsDialog({
   onOpenChange,
 }: AccountSettingsDialogProps) {
   const { user } = useAuth()
-
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const { toast } = useToast()
 
   const {
     register,
@@ -59,17 +58,16 @@ export function AccountSettingsDialog({
   function handleOpenChange(nextOpen: boolean) {
     onOpenChange(nextOpen)
     if (nextOpen) {
-      setSuccessMessage(null)
       reset()
     }
   }
 
   async function onSubmit(data: ChangePasswordData) {
-    setSuccessMessage(null)
     try {
       await changePassword(data.senhaAtual, data.novaSenha)
-      setSuccessMessage('Senha alterada com sucesso')
+      toast({ title: 'Senha alterada com sucesso' })
       reset()
+      onOpenChange(false)
     } catch (error) {
       setError('senhaAtual', {
         type: 'manual',
@@ -141,12 +139,6 @@ export function AccountSettingsDialog({
               </p>
             )}
           </div>
-
-          {successMessage && (
-            <p className="rounded-xl bg-income/10 px-4 py-3 text-sm text-income">
-              {successMessage}
-            </p>
-          )}
 
           <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
             Alterar senha

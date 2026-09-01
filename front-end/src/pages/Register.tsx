@@ -13,7 +13,6 @@ export function Register() {
   const {
     step,
     loading,
-    formError,
     senha,
     isLastStep,
     currentStepTitle,
@@ -166,12 +165,6 @@ export function Register() {
               )}
             </div>
           </form>
-
-          {formError && (
-            <p className="mt-4 rounded-xl bg-expense/10 px-4 py-3 text-sm text-expense">
-              {formError}
-            </p>
-          )}
 
           <p className="mt-8 text-center text-sm text-muted">
             Já tem uma conta?{' '}

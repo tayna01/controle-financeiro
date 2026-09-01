@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { isAxiosError } from 'axios'
 import { z } from 'zod'
 import { register as registerAccount } from '@/services/auth'
+import { toast } from '@/hooks/use-toast'
 import { emailSchema, passwordSchema, requiredString } from '@/lib/validation'
 
 const registerSchema = z
@@ -35,7 +36,6 @@ const STEPS: { title: string; fields: (keyof RegisterData)[] }[] = [
 export function useRegister() {
   const [step, setStep] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [formError, setFormError] = useState<string | null>(null)
   const navigate = useNavigate()
   const {
     register,
@@ -57,7 +57,6 @@ export function useRegister() {
   async function handleNext() {
     const valid = await trigger(STEPS[step].fields)
     if (valid) {
-      setFormError(null)
       setStep((current) => current + 1)
     }
   }
@@ -68,7 +67,6 @@ export function useRegister() {
 
   async function onSubmit(data: RegisterData) {
     setLoading(true)
-    setFormError(null)
     try {
       await registerAccount(data.nome, data.email, data.senha)
       navigate('/login', {
@@ -84,14 +82,17 @@ export function useRegister() {
         })
         return
       }
-      setFormError('Falha ao criar conta. Tente novamente.')
+      toast({
+        title: 'Erro ao criar conta',
+        description: 'Falha ao criar conta. Tente novamente.',
+        variant: 'destructive',
+      })
     }
   }
 
   return {
     step,
     loading,
-    formError,
     senha,
     isLastStep,
     currentStepTitle,

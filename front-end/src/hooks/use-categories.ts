@@ -7,6 +7,7 @@ import {
   type Category,
   type CategoryType,
 } from '@/services/categories'
+import { toast } from '@/hooks/use-toast'
 
 export function useCategories() {
   const [categories, setCategories] = useState<Category[]>([])
@@ -16,7 +17,6 @@ export function useCategories() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<Category | null>(null)
   const [saving, setSaving] = useState(false)
-  const [formError, setFormError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const load = useCallback(async () => {
@@ -52,13 +52,11 @@ export function useCategories() {
 
   function openCreateDialog() {
     setEditing(null)
-    setFormError(null)
     setDialogOpen(true)
   }
 
   function openEditDialog(category: Category) {
     setEditing(category)
-    setFormError(null)
     setDialogOpen(true)
   }
 
@@ -69,7 +67,6 @@ export function useCategories() {
     onFieldError?: (field: string, message: string) => void
   }) {
     setSaving(true)
-    setFormError(null)
     try {
       if (editing) {
         await updateCategory(editing.id, {
@@ -84,6 +81,9 @@ export function useCategories() {
           color: data.color,
         })
       }
+      toast({
+        title: editing ? 'Categoria atualizada' : 'Categoria criada',
+      })
       setDialogOpen(false)
       await load()
     } catch (error) {
@@ -95,7 +95,11 @@ export function useCategories() {
       ) {
         data.onFieldError?.('name', message)
       } else {
-        setFormError(message)
+        toast({
+          title: 'Erro ao salvar categoria',
+          description: message,
+          variant: 'destructive',
+        })
       }
     } finally {
       setSaving(false)
@@ -111,9 +115,14 @@ export function useCategories() {
     setDeletingId(String(category.id))
     try {
       await deleteCategory(category.id)
+      toast({ title: 'Categoria excluída' })
       await load()
     } catch {
-      window.alert('Não foi possível excluir a categoria.')
+      toast({
+        title: 'Erro ao excluir categoria',
+        description: 'Não foi possível excluir a categoria.',
+        variant: 'destructive',
+      })
     } finally {
       setDeletingId(null)
     }
@@ -126,7 +135,6 @@ export function useCategories() {
     dialogOpen,
     editing,
     saving,
-    formError,
     deletingId,
     setDialogOpen,
     openCreateDialog,
