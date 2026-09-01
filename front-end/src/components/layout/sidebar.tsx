@@ -9,9 +9,11 @@ import {
   Menu,
   Tags,
   UserRound,
+  Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/contexts/auth-context'
+import { clearCachedWallet } from '@/services/wallets'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -30,6 +32,7 @@ const NAV_ITEMS = [
   },
   { to: '/app/transacoes', label: 'Transações', icon: ArrowLeftRight },
   { to: '/app/categorias', label: 'Categorias', icon: Tags },
+  { to: '/app/compartilhamento', label: 'Compartilhamento', icon: Users },
   { to: '/app/perfil', label: 'Perfil', icon: UserRound },
 ]
 
@@ -46,6 +49,7 @@ function SidebarContent({
   const { logout } = useAuth()
 
   function handleLogout() {
+    clearCachedWallet()
     logout()
     navigate('/login', { replace: true })
   }
