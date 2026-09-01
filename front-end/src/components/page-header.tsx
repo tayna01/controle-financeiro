@@ -1,6 +1,13 @@
 import type { ReactNode } from 'react'
-import { ChevronRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 import { cn } from '@/lib/utils'
 
 interface BreadcrumbItem {
@@ -26,26 +33,27 @@ export function PageHeader({
   return (
     <header className={cn('space-y-4', className)}>
       <div className="flex items-center gap-2 text-sm text-muted">
-        {breadcrumbs.map((item, index) => {
-          const isLast = index === breadcrumbs.length - 1
-          return (
-            <div key={item.label} className="flex items-center gap-2">
-              {item.to && !isLast ? (
-                <Link
-                  to={item.to}
-                  className="font-medium transition-colors hover:text-foreground"
-                >
-                  {item.label}
-                </Link>
-              ) : (
-                <span className={cn(!isLast && 'font-medium')}>
-                  {item.label}
-                </span>
-              )}
-              {!isLast && <ChevronRight className="size-4" />}
-            </div>
-          )
-        })}
+        {breadcrumbs.length > 0 && (
+          <Breadcrumb>
+            <BreadcrumbList>
+              {breadcrumbs.map((item, index) => {
+                const isLast = index === breadcrumbs.length - 1
+                return (
+                  <BreadcrumbItem key={item.label}>
+                    {item.to && !isLast ? (
+                      <BreadcrumbLink asChild>
+                        <Link to={item.to}>{item.label}</Link>
+                      </BreadcrumbLink>
+                    ) : (
+                      <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                    )}
+                    {!isLast && <BreadcrumbSeparator />}
+                  </BreadcrumbItem>
+                )
+              })}
+            </BreadcrumbList>
+          </Breadcrumb>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">

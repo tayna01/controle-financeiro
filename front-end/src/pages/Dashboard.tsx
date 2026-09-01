@@ -3,13 +3,18 @@ import { PageHeader } from '@/components/page-header'
 import { ExpenseChart } from '@/components/dashboard/expense-chart'
 import { RecentTransactions } from '@/components/dashboard/recent-transactions'
 import { SummaryCards } from '@/components/dashboard/summary-cards'
+import { Skeleton } from '@/components/ui/skeleton'
 import { fetchTransactions, type Transaction } from '@/services/transactions'
+import { useWallet } from '@/contexts/wallet-context'
 
 export function Dashboard() {
+  const { selectedWallet } = useWallet()
+  const walletId = selectedWallet?.id
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!walletId) return
     let active = true
     fetchTransactions().then((data) => {
       if (active) {
@@ -20,7 +25,7 @@ export function Dashboard() {
     return () => {
       active = false
     }
-  }, [])
+  }, [walletId])
 
   const income = transactions
     .filter((transaction) => transaction.type === 'income')
@@ -47,15 +52,12 @@ export function Dashboard() {
         <div className="space-y-6" aria-label="Carregando dashboard">
           <div className="grid gap-4 md:grid-cols-3">
             {Array.from({ length: 3 }, (_, index) => (
-              <div
-                key={index}
-                className="h-28 animate-pulse rounded-2xl border border-border bg-surface"
-              />
+              <Skeleton key={index} className="h-28 rounded-2xl" />
             ))}
           </div>
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="h-72 animate-pulse rounded-2xl border border-border bg-surface" />
-            <div className="h-72 animate-pulse rounded-2xl border border-border bg-surface" />
+            <Skeleton className="h-72 rounded-2xl" />
+            <Skeleton className="h-72 rounded-2xl" />
           </div>
         </div>
       ) : (

@@ -1,8 +1,6 @@
 import {
   ArrowDownLeft,
   ArrowUpRight,
-  ChevronLeft,
-  ChevronRight,
   Loader2,
   Pencil,
   Receipt,
@@ -10,6 +8,14 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination'
+import { Skeleton } from '@/components/ui/skeleton'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import { type Transaction, type TransactionPage } from '@/services/transactions'
 
@@ -39,10 +45,7 @@ export function TransactionList({
       {loading ? (
         <div className="space-y-3">
           {Array.from({ length: 5 }, (_, index) => (
-            <div
-              key={index}
-              className="h-12 animate-pulse rounded-xl bg-muted/20"
-            />
+            <Skeleton key={index} className="h-12 rounded-xl" />
           ))}
         </div>
       ) : loadError ? (
@@ -69,31 +72,46 @@ export function TransactionList({
             ))}
           </ul>
 
-          <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
+          <div className="mt-4 flex flex-col items-center justify-between gap-3 border-t border-border pt-4 sm:flex-row">
             <span className="text-sm text-muted">
               {data.totalElements} transação(ões) · página {data.page + 1} de{' '}
               {Math.max(data.totalPages, 1)}
             </span>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={data.page === 0 || loading}
-                onClick={() => onPageChange(page - 1)}
-              >
-                <ChevronLeft className="size-4" />
-                Anterior
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={data.page >= data.totalPages - 1 || loading}
-                onClick={() => onPageChange(page + 1)}
-              >
-                Próxima
-                <ChevronRight className="size-4" />
-              </Button>
-            </div>
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(event) => {
+                      event.preventDefault()
+                      if (data.page > 0 && !loading) onPageChange(page - 1)
+                    }}
+                    aria-disabled={data.page === 0 || loading}
+                    className={
+                      data.page === 0 || loading
+                        ? 'pointer-events-none opacity-50'
+                        : undefined
+                    }
+                  />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(event) => {
+                      event.preventDefault()
+                      if (data.page < data.totalPages - 1 && !loading)
+                        onPageChange(page + 1)
+                    }}
+                    aria-disabled={data.page >= data.totalPages - 1 || loading}
+                    className={
+                      data.page >= data.totalPages - 1 || loading
+                        ? 'pointer-events-none opacity-50'
+                        : undefined
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
         </>
       )}

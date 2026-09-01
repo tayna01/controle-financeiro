@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { cn } from '@/lib/utils'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import type { Category, CategoryType } from '@/services/categories'
 
 const categorySchema = z.object({
@@ -29,7 +29,6 @@ interface CategoryFormProps {
   onOpenChange: (open: boolean) => void
   editing: Category | null
   saving: boolean
-  formError: string | null
   onSubmit: (data: {
     name: string
     type: CategoryType
@@ -45,12 +44,10 @@ function getDefaultColor(type: CategoryType): string {
 function CategoryFormFields({
   editing,
   saving,
-  formError,
   onSubmit,
 }: {
   editing: Category | null
   saving: boolean
-  formError: string | null
   onSubmit: CategoryFormProps['onSubmit']
 }) {
   const [color, setColor] = useState(
@@ -95,32 +92,30 @@ function CategoryFormFields({
       <div className="space-y-2">
         <Label>Tipo</Label>
         <input type="hidden" {...register('type')} />
-        <div className="grid grid-cols-2 gap-3">
-          <button
+        <ToggleGroup
+          type="single"
+          variant="outline"
+          value={type}
+          onValueChange={(value) => {
+            if (value) setValue('type', value as 'INCOME' | 'EXPENSE')
+          }}
+          className="w-full"
+        >
+          <ToggleGroupItem
             type="button"
-            onClick={() => setValue('type', 'INCOME')}
-            className={cn(
-              'h-11 rounded-xl border px-4 py-2 text-sm font-medium transition-colors',
-              type === 'INCOME'
-                ? 'border-income bg-income/10 text-income'
-                : 'border-border bg-surface text-muted',
-            )}
+            value="INCOME"
+            className="flex-1 text-income data-[state=on]:bg-income data-[state=on]:text-white"
           >
             Receita
-          </button>
-          <button
+          </ToggleGroupItem>
+          <ToggleGroupItem
             type="button"
-            onClick={() => setValue('type', 'EXPENSE')}
-            className={cn(
-              'h-11 rounded-xl border px-4 py-2 text-sm font-medium transition-colors',
-              type === 'EXPENSE'
-                ? 'border-expense bg-expense/10 text-expense'
-                : 'border-border bg-surface text-muted',
-            )}
+            value="EXPENSE"
+            className="flex-1 text-expense data-[state=on]:bg-expense data-[state=on]:text-white"
           >
             Despesa
-          </button>
-        </div>
+          </ToggleGroupItem>
+        </ToggleGroup>
       </div>
 
       <div className="space-y-2">
@@ -139,12 +134,6 @@ function CategoryFormFields({
         </div>
       </div>
 
-      {formError && (
-        <p className="rounded-xl bg-expense/10 px-4 py-3 text-sm text-expense">
-          {formError}
-        </p>
-      )}
-
       <DialogFooter>
         <Button type="submit" size="lg" className="w-full" disabled={saving}>
           {saving && <Loader2 className="size-5 animate-spin" />}
@@ -160,7 +149,6 @@ export function CategoryForm({
   onOpenChange,
   editing,
   saving,
-  formError,
   onSubmit,
 }: CategoryFormProps) {
   return (
@@ -182,7 +170,6 @@ export function CategoryForm({
             key={editing?.id ?? 'new'}
             editing={editing}
             saving={saving}
-            formError={formError}
             onSubmit={onSubmit}
           />
         )}

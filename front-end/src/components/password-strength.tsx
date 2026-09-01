@@ -1,20 +1,27 @@
+import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
 
 interface PasswordStrengthProps {
   password: string
 }
 
-const STRENGTH_RULES = [
-  { label: '8+ caracteres', test: (p: string) => p.length >= 8 },
-  { label: 'Letra maiúscula', test: (p: string) => /[A-Z]/.test(p) },
-  { label: 'Letra minúscula', test: (p: string) => /[a-z]/.test(p) },
-  { label: 'Número', test: (p: string) => /\d/.test(p) },
-  { label: 'Símbolo', test: (p: string) => /[^A-Za-z0-9]/.test(p) },
+interface StrengthRule {
+  label: string
+  test: (password: string) => boolean
+}
+
+const STRENGTH_RULES: StrengthRule[] = [
+  { label: '8+ caracteres', test: (p) => p.length >= 8 },
+  { label: 'Letra maiúscula', test: (p) => /[A-Z]/.test(p) },
+  { label: 'Letra minúscula', test: (p) => /[a-z]/.test(p) },
+  { label: 'Número', test: (p) => /\d/.test(p) },
+  { label: 'Símbolo', test: (p) => /[^A-Za-z0-9]/.test(p) },
 ]
 
 const TOTAL_SEGMENTS = 4
 
 export function PasswordStrength({ password }: PasswordStrengthProps) {
+  console.log('PasswordStrength rendered with password:', password)
   if (!password) return null
 
   const metCount = STRENGTH_RULES.filter((rule) => rule.test(password)).length
@@ -35,17 +42,11 @@ export function PasswordStrength({ password }: PasswordStrengthProps) {
 
   return (
     <div className="space-y-2">
-      <div className="flex gap-1">
-        {Array.from({ length: TOTAL_SEGMENTS }, (_, index) => (
-          <div
-            key={index}
-            className={cn(
-              'h-1 flex-1 rounded-full bg-border transition-colors',
-              index < filledSegments && level.bar,
-            )}
-          />
-        ))}
-      </div>
+      <Progress
+        value={(filledSegments / TOTAL_SEGMENTS) * 100}
+        className="h-1.5 rounded-full"
+        indicatorClassName={level.bar}
+      />
       <div className="flex items-center justify-between gap-2">
         <p className={cn('text-xs font-medium', level.text)}>{level.label}</p>
         <p className="text-xs text-muted">

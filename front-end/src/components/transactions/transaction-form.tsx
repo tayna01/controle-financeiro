@@ -14,12 +14,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { cn } from '@/lib/utils'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import type { Category } from '@/services/categories'
 import type { Transaction, TransactionInput } from '@/services/transactions'
-
-const SELECT_CLASS =
-  'flex h-11 w-full rounded-xl border border-border bg-surface px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40'
 
 const transactionSchema = z.object({
   type: z.enum(['income', 'expense']),
@@ -42,7 +46,6 @@ interface TransactionFormProps {
   editingTransaction: Transaction | null
   categories: Category[]
   saving: boolean
-  formError: string | null
   onSubmit: (input: TransactionInput) => Promise<void>
 }
 
@@ -52,7 +55,6 @@ export function TransactionForm({
   editingTransaction,
   categories,
   saving,
-  formError,
   onSubmit,
 }: TransactionFormProps) {
   const {
@@ -126,32 +128,30 @@ export function TransactionForm({
 
         <form className="space-y-5" onSubmit={handleSubmit(handleFormSubmit)} noValidate>
           <input type="hidden" {...register('type')} />
-          <div className="grid grid-cols-2 gap-3">
-            <button
+          <ToggleGroup
+            type="single"
+            variant="outline"
+            value={formType}
+            onValueChange={(value) => {
+              if (value) setValue('type', value as 'income' | 'expense')
+            }}
+            className="w-full"
+          >
+            <ToggleGroupItem
               type="button"
-              onClick={() => setValue('type', 'income')}
-              className={cn(
-                'h-11 rounded-xl border px-4 py-2 text-sm font-medium transition-colors',
-                formType === 'income'
-                  ? 'border-income bg-income/10 text-income'
-                  : 'border-border bg-surface text-muted',
-              )}
+              value="income"
+              className="flex-1 text-income data-[state=on]:bg-income data-[state=on]:text-white"
             >
               Receita
-            </button>
-            <button
+            </ToggleGroupItem>
+            <ToggleGroupItem
               type="button"
-              onClick={() => setValue('type', 'expense')}
-              className={cn(
-                'h-11 rounded-xl border px-4 py-2 text-sm font-medium transition-colors',
-                formType === 'expense'
-                  ? 'border-expense bg-expense/10 text-expense'
-                  : 'border-border bg-surface text-muted',
-              )}
+              value="expense"
+              className="flex-1 text-expense data-[state=on]:bg-expense data-[state=on]:text-white"
             >
               Despesa
-            </button>
-          </div>
+            </ToggleGroupItem>
+          </ToggleGroup>
 
           <div className="space-y-2">
             <Label htmlFor="transaction-amount">Valor</Label>
@@ -195,28 +195,28 @@ export function TransactionForm({
               )}
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 w-full">
               <Label htmlFor="transaction-category">Categoria</Label>
-              <select
-                id="transaction-category"
-                className={SELECT_CLASS}
-                {...register('categoryId')}
+              <Select
+                onValueChange={(value) => setValue('categoryId', value)}
               >
-                <option value="">Sem categoria</option>
-                {categoriesForForm.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger id="transaction-category">
+                  <SelectValue placeholder="Sem categoria" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Sem categoria</SelectItem>
+                  {categoriesForForm.map((category) => (
+                    <SelectItem key={category.id} value={String(category.id)}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.categoryId && (
+                <p className="text-sm text-expense">{errors.categoryId.message}</p>
+              )}
             </div>
           </div>
-
-          {formError && (
-            <p className="rounded-xl bg-expense/10 px-4 py-3 text-sm text-expense">
-              {formError}
-            </p>
-          )}
 
           <DialogFooter>
             <Button type="submit" size="lg" className="w-full" disabled={saving}>

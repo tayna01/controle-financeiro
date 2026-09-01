@@ -2,6 +2,11 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { LogOut, Moon, ShieldCheck, Sun } from 'lucide-react'
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/avatar'
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -11,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useAuth } from '@/contexts/auth-context'
 import { AccountSettingsDialog } from '@/components/layout/account-settings'
+import { clearCachedWallet } from '@/services/wallets'
 import fotoPerfil from '@/assets/foto_perfil.jpeg'
 
 export function UserMenu() {
@@ -29,8 +35,18 @@ export function UserMenu() {
   }
 
   function handleLogout() {
+    clearCachedWallet()
     logout()
     navigate('/login', { replace: true })
+  }
+
+  function getInitials(nome: string): string {
+    return nome
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]!.toUpperCase())
+      .join('')
   }
 
   if (!user) return null
@@ -45,22 +61,28 @@ export function UserMenu() {
             aria-label="Abrir menu da conta"
             className="size-9 shrink-0 cursor-pointer overflow-hidden rounded-full border-2 border-primary/40 transition-all hover:ring-2 hover:ring-primary/40 focus-visible:ring-2 focus-visible:ring-primary focus:outline-none"
           >
-            <img
-              src={fotoPerfil}
-              alt="Foto do perfil"
-              className="size-full object-cover"
-            />
+            <Avatar className="size-full rounded-full">
+              <AvatarImage
+                src={fotoPerfil}
+                alt="Foto do perfil"
+                className="object-cover"
+              />
+              <AvatarFallback>{getInitials(user.nome)}</AvatarFallback>
+            </Avatar>
           </button>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end" className="w-64">
           <DropdownMenuLabel>
             <div className="flex items-center gap-3">
-              <img
-                src={fotoPerfil}
-                alt="Foto do perfil"
-                className="size-10 shrink-0 rounded-full object-cover"
-              />
+              <Avatar className="size-10 shrink-0">
+                <AvatarImage
+                  src={fotoPerfil}
+                  alt="Foto do perfil"
+                  className="object-cover"
+                />
+                <AvatarFallback>{getInitials(user.nome)}</AvatarFallback>
+              </Avatar>
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">{user.nome}</p>
                 <p className="truncate text-xs text-muted">{user.email}</p>

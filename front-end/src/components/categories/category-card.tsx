@@ -1,4 +1,5 @@
 import { Loader2, Pencil, Trash2 } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -34,16 +35,16 @@ export function CategoryCard({
           />
           <div className="min-w-0">
             <p className="truncate font-semibold">{category.name}</p>
-            <span
+            <Badge
               className={cn(
-                'mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium',
+                'mt-1',
                 category.type === 'INCOME'
                   ? 'bg-income/10 text-income'
                   : 'bg-expense/10 text-expense',
               )}
             >
               {TYPE_LABELS[category.type]}
-            </span>
+            </Badge>
           </div>
         </div>
         <div className="flex shrink-0 gap-1">

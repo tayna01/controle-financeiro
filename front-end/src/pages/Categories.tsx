@@ -2,6 +2,7 @@ import { Plus, Tag } from 'lucide-react'
 import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useCategories } from '@/hooks/use-categories'
 import { CategoryCard } from '@/components/categories/category-card'
 import { CategoryForm } from '@/components/categories/category-form'
@@ -14,7 +15,6 @@ export function Categories() {
     dialogOpen,
     editing,
     saving,
-    formError,
     deletingId,
     setDialogOpen,
     openCreateDialog,
@@ -43,10 +43,7 @@ export function Categories() {
       {loading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }, (_, index) => (
-            <div
-              key={index}
-              className="h-24 animate-pulse rounded-2xl border border-border bg-surface"
-            />
+            <Skeleton key={index} className="h-24 rounded-2xl" />
           ))}
         </div>
       ) : loadError ? (
@@ -78,7 +75,6 @@ export function Categories() {
         onOpenChange={setDialogOpen}
         editing={editing}
         saving={saving}
-        formError={formError}
         onSubmit={handleSave}
       />
     </div>
