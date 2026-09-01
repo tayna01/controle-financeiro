@@ -1,11 +1,15 @@
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select'
 import type { Category } from '@/services/categories'
 import type { TransactionType } from '@/services/transactions'
-
-const SELECT_CLASS =
-  'flex h-11 w-full rounded-xl border border-border bg-surface px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40'
 
 interface TransactionFiltersProps {
   categories: Category[]
@@ -32,13 +36,13 @@ export function TransactionFilters({
   onFilterEndDateChange,
   onResetPage,
 }: TransactionFiltersProps) {
-  function handleTypeChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    onFilterTypeChange(event.target.value as '' | TransactionType)
+  function handleTypeChange(value: string) {
+    onFilterTypeChange(value as '' | TransactionType)
     onResetPage()
   }
 
-  function handleCategoryChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    onFilterCategoryChange(event.target.value)
+  function handleCategoryChange(value: string) {
+    onFilterCategoryChange(value)
     onResetPage()
   }
 
@@ -54,35 +58,35 @@ export function TransactionFilters({
 
   return (
     <Card className="grid gap-4 p-5 md:grid-cols-4">
-      <div className="space-y-2">
+      <div className="space-y-2 w-full">
         <Label htmlFor="filter-type">Tipo</Label>
-        <select
-          id="filter-type"
-          className={SELECT_CLASS}
-          value={filterType}
-          onChange={handleTypeChange}
-        >
-          <option value="">Todos</option>
-          <option value="income">Receitas</option>
-          <option value="expense">Despesas</option>
-        </select>
+        <Select value={filterType} onValueChange={handleTypeChange}>
+          <SelectTrigger id="filter-type">
+            <SelectValue placeholder="Todos" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Todos</SelectItem>
+            <SelectItem value="income">Receitas</SelectItem>
+            <SelectItem value="expense">Despesas</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2 w-full">
         <Label htmlFor="filter-category">Categoria</Label>
-        <select
-          id="filter-category"
-          className={SELECT_CLASS}
-          value={filterCategory}
-          onChange={handleCategoryChange}
-        >
-          <option value="">Todas</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
+        <Select value={filterCategory} onValueChange={handleCategoryChange}>
+          <SelectTrigger id="filter-category">
+            <SelectValue placeholder="Todas" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Todas</SelectItem>
+            {categories.map((category) => (
+              <SelectItem key={category.id} value={String(category.id)}>
+                {category.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-2">
