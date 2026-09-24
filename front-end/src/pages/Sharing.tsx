@@ -3,6 +3,16 @@ import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { useWalletSharing } from '@/hooks/use-wallet-sharing'
 import { MemberList } from '@/components/sharing/member-list'
 import { ShareWalletDialog } from '@/components/sharing/share-wallet-dialog'
@@ -16,6 +26,7 @@ export function Sharing() {
     saving,
     removingId,
     changingRoleId,
+    pendingRemove,
     isOwner,
     walletName,
     setDialogOpen,
@@ -23,6 +34,7 @@ export function Sharing() {
     handleShare,
     handleRemove,
     handleChangeRole,
+    setPendingRemove,
   } = useWalletSharing()
 
   return (
@@ -70,7 +82,7 @@ export function Sharing() {
           isOwner={isOwner}
           removingId={removingId}
           changingRoleId={changingRoleId}
-          onRemove={handleRemove}
+          onRemove={setPendingRemove}
           onChangeRole={handleChangeRole}
         />
       )}
@@ -81,6 +93,38 @@ export function Sharing() {
         saving={saving}
         onSubmit={handleShare}
       />
+
+      <AlertDialog
+        open={pendingRemove !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingRemove(null)
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remover acesso?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deseja remover o acesso de &quot;{pendingRemove?.name}&quot; a
+              esta carteira? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              disabled={removingId !== null}
+              onClick={() => setPendingRemove(null)}
+            >
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-white hover:bg-destructive/90"
+              disabled={removingId !== null}
+              onClick={() => pendingRemove && handleRemove(pendingRemove)}
+            >
+              {removingId !== null ? 'Removendo...' : 'Remover'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

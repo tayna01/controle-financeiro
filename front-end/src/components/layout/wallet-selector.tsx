@@ -49,10 +49,9 @@ export function WalletSelector() {
             {loadError
               ? 'Carteiras indisponíveis'
               : selectedWallet
-                ? selectedWallet.name +
-                  (selectedIsShared && selectedWallet.ownerName
-                    ? ` · ${selectedWallet.ownerName}`
-                    : '')
+                ? selectedIsShared && selectedWallet.ownerName
+                  ? selectedWallet.ownerName
+                  : selectedWallet.name
                 : 'Nenhuma carteira'}
           </span>
         </SelectTrigger>
@@ -70,14 +69,7 @@ export function WalletSelector() {
               <SelectLabel>Compartilhadas com você</SelectLabel>
               {sharedWallets.map((wallet) => (
                 <SelectItem key={wallet.id} value={String(wallet.id)}>
-                  <span className="flex items-center gap-1">
-                    <span className="truncate">{wallet.name}</span>
-                    {wallet.ownerName && (
-                      <span className="truncate text-muted">
-                        {'·'} {wallet.ownerName}
-                      </span>
-                    )}
-                  </span>
+                  <span className="truncate">{wallet.ownerName ?? wallet.name}</span>
                 </SelectItem>
               ))}
             </SelectGroup>

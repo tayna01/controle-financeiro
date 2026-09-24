@@ -25,6 +25,7 @@ interface TransactionListProps {
   loadError: string | null
   deletingId: string | null
   page: number
+  canEdit: boolean
   onEdit: (id: string) => void
   onDelete: (id: string) => void
   onPageChange: (page: number) => void
@@ -36,6 +37,7 @@ export function TransactionList({
   loadError,
   deletingId,
   page,
+  canEdit,
   onEdit,
   onDelete,
   onPageChange,
@@ -65,6 +67,7 @@ export function TransactionList({
               <TransactionRow
                 key={transaction.id}
                 transaction={transaction}
+                canEdit={canEdit}
                 isDeleting={deletingId === transaction.id}
                 onEdit={onEdit}
                 onDelete={onDelete}
@@ -121,11 +124,13 @@ export function TransactionList({
 
 function TransactionRow({
   transaction,
+  canEdit,
   isDeleting,
   onEdit,
   onDelete,
 }: {
   transaction: Transaction
+  canEdit: boolean
   isDeleting: boolean
   onEdit: (id: string) => void
   onDelete: (id: string) => void
@@ -174,6 +179,7 @@ function TransactionRow({
             variant="ghost"
             size="icon"
             aria-label={`Editar ${transaction.description}`}
+            disabled={!canEdit}
             onClick={() => onEdit(transaction.id)}
           >
             <Pencil className="size-4" />
@@ -183,7 +189,7 @@ function TransactionRow({
             size="icon"
             className="text-expense hover:text-expense"
             aria-label={`Excluir ${transaction.description}`}
-            disabled={isDeleting}
+            disabled={isDeleting || !canEdit}
             onClick={() => onDelete(transaction.id)}
           >
             {isDeleting ? (

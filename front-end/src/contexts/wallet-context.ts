@@ -4,6 +4,7 @@ import type { Wallet } from '@/services/wallets'
 interface WalletContextValue {
   wallets: Wallet[]
   selectedWallet: Wallet | null
+  canEdit: boolean
   loading: boolean
   loadError: string | null
   selectWallet: (walletId: number) => void

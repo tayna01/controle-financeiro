@@ -22,6 +22,7 @@ export function useWalletSharing() {
 
   const [removingId, setRemovingId] = useState<number | null>(null)
   const [changingRoleId, setChangingRoleId] = useState<number | null>(null)
+  const [pendingRemove, setPendingRemove] = useState<WalletMember | null>(null)
 
   const isOwner = members.some((member) => member.role === 'DONO')
   const walletName = selectedWallet?.name ?? ''
@@ -86,11 +87,6 @@ export function useWalletSharing() {
   }
 
   async function handleRemove(member: WalletMember) {
-    const confirmed = window.confirm(
-      `Remover o acesso de "${member.name}" a esta carteira?`,
-    )
-    if (!confirmed) return
-
     setRemovingId(member.userId)
     try {
       await removeWalletMember(member.userId)
@@ -107,6 +103,7 @@ export function useWalletSharing() {
       })
     } finally {
       setRemovingId(null)
+      setPendingRemove(null)
     }
   }
 
@@ -139,6 +136,7 @@ export function useWalletSharing() {
     saving,
     removingId,
     changingRoleId,
+    pendingRemove,
     isOwner,
     walletName,
     setDialogOpen,
@@ -146,5 +144,6 @@ export function useWalletSharing() {
     handleShare,
     handleRemove,
     handleChangeRole,
+    setPendingRemove,
   }
 }

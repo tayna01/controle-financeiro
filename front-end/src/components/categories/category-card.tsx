@@ -12,6 +12,7 @@ const TYPE_LABELS: Record<CategoryType, string> = {
 
 interface CategoryCardProps {
   category: Category
+  canEdit: boolean
   isDeleting: boolean
   onEdit: (category: Category) => void
   onDelete: (category: Category) => void
@@ -19,6 +20,7 @@ interface CategoryCardProps {
 
 export function CategoryCard({
   category,
+  canEdit,
   isDeleting,
   onEdit,
   onDelete,
@@ -52,6 +54,7 @@ export function CategoryCard({
             variant="ghost"
             size="icon"
             aria-label={`Editar ${category.name}`}
+            disabled={!canEdit}
             onClick={() => onEdit(category)}
           >
             <Pencil className="size-4" />
@@ -61,7 +64,7 @@ export function CategoryCard({
             size="icon"
             className="text-expense hover:text-expense"
             aria-label={`Excluir ${category.name}`}
-            disabled={isDeleting}
+            disabled={isDeleting || !canEdit}
             onClick={() => onDelete(category)}
           >
             {isDeleting ? (

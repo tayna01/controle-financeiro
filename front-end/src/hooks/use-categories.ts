@@ -18,6 +18,7 @@ export function useCategories() {
   const [editing, setEditing] = useState<Category | null>(null)
   const [saving, setSaving] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [pendingDelete, setPendingDelete] = useState<Category | null>(null)
 
   const load = useCallback(async () => {
     try {
@@ -107,11 +108,6 @@ export function useCategories() {
   }
 
   async function handleDelete(category: Category) {
-    const confirmed = window.confirm(
-      `Excluir a categoria "${category.name}"? As transações vinculadas não serão apagadas.`,
-    )
-    if (!confirmed) return
-
     setDeletingId(String(category.id))
     try {
       await deleteCategory(category.id)
@@ -125,6 +121,7 @@ export function useCategories() {
       })
     } finally {
       setDeletingId(null)
+      setPendingDelete(null)
     }
   }
 
@@ -136,10 +133,12 @@ export function useCategories() {
     editing,
     saving,
     deletingId,
+    pendingDelete,
     setDialogOpen,
     openCreateDialog,
     openEditDialog,
     handleSave,
     handleDelete,
+    setPendingDelete,
   }
 }

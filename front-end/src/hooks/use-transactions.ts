@@ -7,6 +7,7 @@ import {
   type TransactionFilters,
   type TransactionInput,
   type TransactionPage,
+  type Transaction,
   type TransactionType,
 } from '@/services/transactions'
 import {
@@ -35,6 +36,7 @@ export function useTransactions() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [pendingDelete, setPendingDelete] = useState<Transaction | null>(null)
 
   const buildFilters = useCallback((): TransactionFilters => ({
     type: filterType === '' ? null : filterType,
@@ -118,9 +120,6 @@ export function useTransactions() {
   }
 
   async function handleDelete(transactionId: string) {
-    const confirmed = window.confirm('Excluir esta transação?')
-    if (!confirmed) return
-
     setDeletingId(transactionId)
     try {
       await deleteTransaction(transactionId)
@@ -137,6 +136,7 @@ export function useTransactions() {
       })
     } finally {
       setDeletingId(null)
+      setPendingDelete(null)
     }
   }
 
@@ -158,6 +158,7 @@ export function useTransactions() {
     editingTransaction,
     saving,
     deletingId,
+    pendingDelete,
     setFilterType,
     setFilterCategory,
     setFilterStartDate,
@@ -167,5 +168,6 @@ export function useTransactions() {
     openEditDialog,
     handleSave,
     handleDelete,
+    setPendingDelete,
   }
 }

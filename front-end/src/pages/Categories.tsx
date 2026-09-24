@@ -3,11 +3,23 @@ import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { useCategories } from '@/hooks/use-categories'
+import { useWallet } from '@/contexts/wallet-context'
 import { CategoryCard } from '@/components/categories/category-card'
 import { CategoryForm } from '@/components/categories/category-form'
 
 export function Categories() {
+  const { canEdit } = useWallet()
   const {
     categories,
     loading,
@@ -16,11 +28,13 @@ export function Categories() {
     editing,
     saving,
     deletingId,
+    pendingDelete,
     setDialogOpen,
     openCreateDialog,
     openEditDialog,
     handleSave,
     handleDelete,
+    setPendingDelete,
   } = useCategories()
 
   return (
@@ -33,7 +47,7 @@ export function Categories() {
           { label: 'Categorias' },
         ]}
         actions={
-          <Button onClick={openCreateDialog}>
+          <Button onClick={openCreateDialog} disabled={!canEdit}>
             <Plus className="size-4" />
             Nova categoria
           </Button>
@@ -62,9 +76,10 @@ export function Categories() {
             <CategoryCard
               key={category.id}
               category={category}
+              canEdit={canEdit}
               isDeleting={deletingId === String(category.id)}
               onEdit={openEditDialog}
-              onDelete={handleDelete}
+              onDelete={setPendingDelete}
             />
           ))}
         </div>
@@ -77,6 +92,38 @@ export function Categories() {
         saving={saving}
         onSubmit={handleSave}
       />
+
+      <AlertDialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDelete(null)
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir categoria?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deseja excluir a categoria &quot;{pendingDelete?.name}&quot;? As
+              transações vinculadas não serão apagadas.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              disabled={deletingId !== null}
+              onClick={() => setPendingDelete(null)}
+            >
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-white hover:bg-destructive/90"
+              disabled={deletingId !== null}
+              onClick={() => pendingDelete && handleDelete(pendingDelete)}
+            >
+              {deletingId !== null ? 'Excluindo...' : 'Excluir'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

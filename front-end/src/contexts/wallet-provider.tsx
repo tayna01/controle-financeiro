@@ -10,10 +10,14 @@ import {
   type Wallet,
 } from '@/services/wallets'
 
-function resolveSelection(wallets: Wallet[]): Wallet | null {
+function resolveSelection(
+  wallets: Wallet[],
+  userName: string | null | undefined,
+): Wallet | null {
   const cachedId = getCachedWalletId()
   return (
     wallets.find((wallet) => wallet.id === cachedId) ??
+    wallets.find((wallet) => isWalletOwnedBy(wallet, userName)) ??
     wallets[0] ??
     null
   )
@@ -36,7 +40,15 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           data = await listWallets()
         }
       }
-      const selection = resolveSelection(data)
+      data = [...data].sort((a, b) => {
+        const aOwned = isWalletOwnedBy(a, user?.nome)
+        const bOwned = isWalletOwnedBy(b, user?.nome)
+        if (aOwned !== bOwned) {
+          return aOwned ? -1 : 1
+        }
+        return 0
+      })
+      const selection = resolveSelection(data, user?.nome)
       setWallets(data)
       setSelectedWallet(selection)
       setLoadError(null)
@@ -86,9 +98,19 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     setSelectedWallet(wallet)
   }
 
+  const canEdit =
+    selectedWallet !== null && isWalletOwnedBy(selectedWallet, user?.nome)
+
   return (
     <WalletContext.Provider
-      value={{ wallets, selectedWallet, loading, loadError, selectWallet }}
+      value={{
+        wallets,
+        selectedWallet,
+        canEdit,
+        loading,
+        loadError,
+        selectWallet,
+      }}
     >
       {children}
     </WalletContext.Provider>
