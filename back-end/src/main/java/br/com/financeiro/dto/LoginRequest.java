@@ -2,6 +2,7 @@ package br.com.financeiro.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,6 @@ public class LoginRequest {
     private String email;
 
     @NotBlank(message = "Senha é obrigatória")
+    @Size(max = 100, message = "Senha muito longa")
     private String password;
 }

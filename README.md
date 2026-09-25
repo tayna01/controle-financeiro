@@ -33,15 +33,18 @@ Este repositório reúne as duas partes do projeto final da disciplina de Progra
 
 ## Variáveis de ambiente
 
-O backend lê as configurações de `src/main/resources/application.properties`:
+O backend lê as configurações de `src/main/resources/application.properties`. Toda configuração sensível pode (e deve) ser sobrescrita por variáveis de ambiente, com valores padrão apenas para desenvolvimento local:
 
 | Variável | Descrição | Valor padrão |
 | --- | --- | --- |
-| `spring.datasource.url` | URL de conexão com o MySQL | `jdbc:mysql://localhost:3306/financeiro` |
-| `spring.datasource.username` | Usuário do banco | `root` |
-| `spring.datasource.password` | Senha do banco | *(vazio)* |
-| `jwt.secret` | Chave secreta para assinar tokens JWT (mínimo 256 bits) | `chave_secreta_do_sistema_financeiro_32_caracteres_minimo` |
-| `jwt.expiration` | Tempo de expiração do token em milissegundos | `86400000` (24h) |
+| `DB_URL` | URL de conexão com o banco | `jdbc:mysql://localhost:3306/financeiro?createDatabaseIfNotExist=true&serverTimezone=UTC` |
+| `DB_USERNAME` | Usuário do banco | `root` |
+| `DB_PASSWORD` | Senha do banco | *(vazio)* |
+| `JWT_SECRET` | Chave secreta para assinar tokens JWT (mínimo 256 bits, **defina um valor forte em produção**) | `chave_secreta_do_sistema_financeiro_32_caracteres_minimo` |
+| `JWT_EXPIRATION` | Tempo de expiração do token em milissegundos | `86400000` (24h) |
+| `PORT` | Porta do servidor | `8080` |
+| `AUTH_MAX_REQUESTS` | Máximo de tentativas por minuto nas rotas `/auth/*` (rate limiting) | `5` |
+| `AUTH_WINDOW_SECONDS` | Janela do rate limiting em segundos | `60` |
 
 ## Como executar
 
@@ -65,6 +68,13 @@ cd back-end
 A API fica disponível em `http://localhost:8080`.
 
 **Documentação Swagger:** `http://localhost:8080/swagger-ui.html`
+
+**Testes do backend** (unitários + integração, rodam em H2 — não precisam do MySQL):
+
+```bash
+cd back-end
+./mvnw test
+```
 
 ## Estrutura do código
 
@@ -146,4 +156,5 @@ back-end/src/main/java/br/com/financeiro/
 - **Carteira automática** — ao primeiro acesso, o sistema cria automaticamente uma "Carteira Pessoal" para o usuário.
 - **Camada de serviço no backend** — toda lógica de negócio fica isolada no `service/`, nunca na `controller/`. Entidades JPA nunca são retornadas diretamente; sempre se usam DTOs.
 - **Tratamento global de erros** — `@ControllerAdvice` padroniza todas as respostas de erro da API no formato `{timestamp, status, error, message}`.
+- **Segurança (OWASP)** — rate limiting nas rotas `/auth/*` (retorno `429`); cabeçalhos HTTP de segurança (CSP, `X-Frame-Options: DENY`, HSTS, `X-Content-Type-Options`); controle de acesso por papel da carteira (DONO/EDITOR × VISUALIZADOR); entrada validada nos DTOs e sanitizada (trim) nos services; segredos via variáveis de ambiente.
 - **Identidade visual própria** — paleta violeta com tema claro/escuro, definida em `src/palette.css`.

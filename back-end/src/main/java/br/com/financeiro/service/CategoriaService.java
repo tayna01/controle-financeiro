@@ -17,6 +17,7 @@ import br.com.financeiro.exception.ConflictException;
 import br.com.financeiro.exception.ResourceNotFoundException;
 import br.com.financeiro.repository.CategoriaRepository;
 import br.com.financeiro.repository.TransacaoRepository;
+import br.com.financeiro.util.TextUtil;
 
 @Service
 public class CategoriaService {
@@ -42,7 +43,8 @@ public class CategoriaService {
 
     @Transactional
     public CategoryResponse create(Usuario usuario, CategoryRequest request) {
-        verificarNomeDuplicado(usuario.getId(), request.getName(), null);
+        String nome = TextUtil.trimToNull(request.getName());
+        verificarNomeDuplicado(usuario.getId(), nome, null);
 
         Categoria categoria = new Categoria();
         categoria.setUsuario(usuario);
@@ -54,7 +56,8 @@ public class CategoriaService {
     @Transactional
     public CategoryResponse update(Usuario usuario, Long id, CategoryRequest request) {
         Categoria categoria = buscar(usuario, id);
-        verificarNomeDuplicado(usuario.getId(), request.getName(), id);
+        String nome = TextUtil.trimToNull(request.getName());
+        verificarNomeDuplicado(usuario.getId(), nome, id);
 
         aplicar(categoria, request);
         return toResponse(categoriaRepository.save(categoria));
@@ -81,10 +84,10 @@ public class CategoriaService {
     }
 
     private void aplicar(Categoria categoria, CategoryRequest request) {
-        categoria.setNome(request.getName());
+        categoria.setNome(TextUtil.trimToNull(request.getName()));
         categoria.setTipo(TransactionType.valueOf(request.getType()).toEntity());
-        categoria.setCor(request.getColor());
-        categoria.setIcone(request.getIcon());
+        categoria.setCor(TextUtil.trimToNull(request.getColor()));
+        categoria.setIcone(TextUtil.trimToNull(request.getIcon()));
     }
 
     private CategoryResponse toResponse(Categoria categoria) {

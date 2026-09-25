@@ -33,6 +33,7 @@ import br.com.financeiro.repository.CarteiraMembroRepository;
 import br.com.financeiro.repository.CarteiraRepository;
 import br.com.financeiro.repository.CategoriaRepository;
 import br.com.financeiro.repository.TransacaoRepository;
+import br.com.financeiro.util.TextUtil;
 
 @Service
 public class TransacaoService {
@@ -167,7 +168,7 @@ public class TransacaoService {
     private void aplicar(Transacao transacao, TransactionRequest request, Usuario usuario) {
         transacao.setTipo(request.getType().toEntity());
         transacao.setValor(request.getAmount());
-        transacao.setDescricao(request.getDescription());
+        transacao.setDescricao(TextUtil.trimToNull(request.getDescription()));
         transacao.setData(request.getDate());
 
         if (request.getCategoryId() != null) {

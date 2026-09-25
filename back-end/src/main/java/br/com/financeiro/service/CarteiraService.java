@@ -23,6 +23,7 @@ import br.com.financeiro.exception.ResourceNotFoundException;
 import br.com.financeiro.repository.CarteiraMembroRepository;
 import br.com.financeiro.repository.CarteiraRepository;
 import br.com.financeiro.repository.UsuarioRepository;
+import br.com.financeiro.util.TextUtil;
 
 @Service
 public class CarteiraService {
@@ -55,8 +56,8 @@ public class CarteiraService {
     public WalletResponse create(Usuario usuario, WalletRequest request) {
         Carteira carteira = new Carteira();
         carteira.setDono(usuario);
-        carteira.setNome(request.getName());
-        carteira.setDescricao(request.getDescription());
+        carteira.setNome(TextUtil.trimToNull(request.getName()));
+        carteira.setDescricao(TextUtil.trimToNull(request.getDescription()));
         carteira = carteiraRepository.save(carteira);
 
         CarteiraMembro dono = new CarteiraMembro();
@@ -73,8 +74,8 @@ public class CarteiraService {
         Carteira carteira = buscarComAcesso(usuario, id);
         exigirDono(carteira, usuario);
 
-        carteira.setNome(request.getName());
-        carteira.setDescricao(request.getDescription());
+        carteira.setNome(TextUtil.trimToNull(request.getName()));
+        carteira.setDescricao(TextUtil.trimToNull(request.getDescription()));
         return toWalletResponse(carteiraRepository.save(carteira));
     }
 

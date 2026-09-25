@@ -37,6 +37,7 @@ import br.com.financeiro.repository.CategoriaRepository;
 import br.com.financeiro.repository.TokenRedefinicaoSenhaRepository;
 import br.com.financeiro.repository.UsuarioRepository;
 import br.com.financeiro.security.JwtService;
+import br.com.financeiro.util.TextUtil;
 
 @Service
 public class AutenticacaoService implements UserDetailsService {
@@ -70,13 +71,14 @@ public class AutenticacaoService implements UserDetailsService {
 
     @Transactional
     public UserResponse register(RegisterRequest request) {
-        if (usuarioRepository.existsByEmailIgnoreCase(request.getEmail())) {
+        String email = TextUtil.trimToNull(request.getEmail()).toLowerCase();
+        if (usuarioRepository.existsByEmailIgnoreCase(email)) {
             throw new ConflictException("E-mail já cadastrado");
         }
 
         Usuario usuario = new Usuario();
-        usuario.setNome(request.getName());
-        usuario.setEmail(request.getEmail());
+        usuario.setNome(TextUtil.trimToNull(request.getName()));
+        usuario.setEmail(email);
         usuario.setSenhaCriptografada(passwordEncoder.encode(request.getPassword()));
         usuario = usuarioRepository.save(usuario);
 
@@ -145,7 +147,7 @@ public class AutenticacaoService implements UserDetailsService {
 
     @Transactional
     public UserResponse updateProfile(Usuario usuario, UpdateUserRequest request) {
-        usuario.setNome(request.getName());
+        usuario.setNome(TextUtil.trimToNull(request.getName()));
         return toUserResponse(usuarioRepository.save(usuario));
     }
 
