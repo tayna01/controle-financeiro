@@ -52,7 +52,7 @@ class RateLimitFilterTest {
         filter.doFilter(requisicao("POST", "/auth/login"), bloqueada, chain);
 
         assertEquals(429, bloqueada.getStatus());
-        assertTrue(bloqueada.getContentType().startsWith("application/json"));
+        assertEquals("application/json", bloqueada.getContentType());
         assertTrue(bloqueada.getContentAsString().contains("Muitas tentativas"));
         assertEquals(2, chamadas.get());
     }

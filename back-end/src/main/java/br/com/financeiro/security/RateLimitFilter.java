@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.lang.NonNull;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +21,6 @@ import jakarta.servlet.http.HttpServletResponse;
  * Limita tentativas em rotas sensíveis (login, recuperação e cadastro).
  * Janela fixa por cliente (IP), configurável via properties.
  */
-@Component
 public class RateLimitFilter extends OncePerRequestFilter {
 
     @Value("${security.rate-limit.auth.max-requests:5}")
@@ -41,13 +40,14 @@ public class RateLimitFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
         return !request.getMethod().equalsIgnoreCase("POST")
                 || !request.getRequestURI().startsWith("/auth/");
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+            @NonNull FilterChain chain)
             throws ServletException, IOException {
         long janeleMillis = Math.max(1, windowSeconds) * 1000L;
         long agora = System.currentTimeMillis();
