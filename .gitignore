@@ -1,6 +1,9 @@
 node_modules
 dist/
 
+### Documentos
+docs/originais/
+
 ### Environment ###
 .env
 .env.local
