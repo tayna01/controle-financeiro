@@ -66,8 +66,9 @@ async function resolveWalletId(): Promise<number> {
   return getOrCreateDefaultWallet()
 }
 
-export async function fetchTransactions(): Promise<Transaction[]> {
-  const walletId = await resolveWalletId()
+export async function fetchTransactions(
+  walletId: number,
+): Promise<Transaction[]> {
   const { data } = await api.get<PageResponse>(
     `/api/v1/wallets/${walletId}/transactions`,
     { params: { size: 100, sort: 'date,desc' } },
@@ -103,29 +104,54 @@ export async function listTransactions(
   }
 }
 
-export async function fetchSummary(
-  startDate?: string,
-  endDate?: string,
-): Promise<{
+export interface SummaryCategory {
+  categoryId: number
+  categoryName: string
+  total: number
+}
+
+export interface SummaryMonth {
+  month: string
+  income: number
+  expense: number
+}
+
+export interface Summary {
   totalIncome: number
   totalExpense: number
   balance: number
   transactionCount: number
-}> {
-  const walletId = await resolveWalletId()
-  const { data } = await api.get<{
-    totalIncome: number
-    totalExpense: number
-    balance: number
-    transactionCount: number
-  }>(`/api/v1/wallets/${walletId}/summary`, {
-    params: { startDate, endDate },
-  })
+  byCategory: SummaryCategory[]
+  byMonth: SummaryMonth[]
+}
+
+interface SummaryResponse {
+  totalIncome: number
+  totalExpense: number
+  balance: number
+  transactionCount: number
+  byCategory: SummaryCategory[]
+  byMonth: SummaryMonth[]
+}
+
+export async function fetchSummary(
+  walletId: number,
+  startDate?: string,
+  endDate?: string,
+): Promise<Summary> {
+  const { data } = await api.get<SummaryResponse>(
+    `/api/v1/wallets/${walletId}/summary`,
+    {
+      params: { startDate, endDate },
+    },
+  )
   return {
     totalIncome: Number(data.totalIncome),
     totalExpense: Number(data.totalExpense),
     balance: Number(data.balance),
     transactionCount: data.transactionCount,
+    byCategory: data.byCategory,
+    byMonth: data.byMonth,
   }
 }
 
