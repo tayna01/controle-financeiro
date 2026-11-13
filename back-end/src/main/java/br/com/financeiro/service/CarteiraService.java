@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +36,8 @@ public class CarteiraService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private AcessoCarteiraService acessoCarteiraService;
     @Transactional(readOnly = true)
     public List<WalletResponse> list(Usuario usuario) {
         List<Carteira> carteiras = carteiraRepository.findByUsuarioId(usuario.getId());
@@ -49,7 +50,7 @@ public class CarteiraService {
 
     @Transactional(readOnly = true)
     public WalletResponse get(Usuario usuario, Long id) {
-        return toWalletResponse(buscarComAcesso(usuario, id));
+        return toWalletResponse(acessoCarteiraService.buscarCarteiraComAcesso(usuario, id));
     }
 
     @Transactional
@@ -88,14 +89,14 @@ public class CarteiraService {
 
     @Transactional(readOnly = true)
     public List<MemberResponse> listMembers(Usuario usuario, Long carteiraId) {
-        buscarComAcesso(usuario, carteiraId);
+        acessoCarteiraService.buscarCarteiraComAcesso(usuario, carteiraId);
         return listMembros(carteiraId);
     }
 
     @Transactional
     public MemberResponse addMember(Usuario usuario, Long carteiraId, MemberRequest request) {
-        Carteira carteira = buscarComAcesso(usuario, carteiraId);
-        exigirDono(carteira, usuario);
+        Carteira carteira = acessoCarteiraService.buscarCarteiraComAcesso(usuario, carteiraId);
+        acessoCarteiraService.exigirDono(usuario, carteira);
 
         Usuario convidado = usuarioRepository.findByEmailIgnoreCase(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o e-mail informado"));
@@ -113,8 +114,8 @@ public class CarteiraService {
 
     @Transactional
     public MemberResponse updateRole(Usuario usuario, Long carteiraId, Long usuarioId, MemberRoleRequest request) {
-        Carteira carteira = buscarComAcesso(usuario, carteiraId);
-        exigirDono(carteira, usuario);
+        Carteira carteira = acessoCarteiraService.buscarCarteiraComAcesso(usuario, carteiraId);
+        acessoCarteiraService.exigirDono(usuario, carteira);
 
         CarteiraMembro membro = buscarMembro(carteiraId, usuarioId);
         if (membro.getPapel() == PapelCarteira.DONO) {
@@ -126,8 +127,8 @@ public class CarteiraService {
 
     @Transactional
     public void removeMember(Usuario usuario, Long carteiraId, Long usuarioId) {
-        Carteira carteira = buscarComAcesso(usuario, carteiraId);
-        exigirDono(carteira, usuario);
+        Carteira carteira = acessoCarteiraService.buscarCarteiraComAcesso(usuario, carteiraId);
+        acessoCarteiraService.exigirDono(usuario, carteira);
 
         CarteiraMembro membro = buscarMembro(carteiraId, usuarioId);
         if (membro.getPapel() == PapelCarteira.DONO) {
@@ -136,27 +137,9 @@ public class CarteiraService {
         membroRepository.delete(membro);
     }
 
-    private Carteira buscarComAcesso(Usuario usuario, Long carteiraId) {
-        Carteira carteira = carteiraRepository.findById(carteiraId)
-                .orElseThrow(() -> new ResourceNotFoundException("Carteira não encontrada"));
-
-        boolean dono = carteira.getDono().getId().equals(usuario.getId());
-        boolean membro = membroRepository.existsByCarteiraIdAndUsuarioId(carteiraId, usuario.getId());
-        if (!dono && !membro) {
-            throw new ResourceNotFoundException("Carteira não encontrada");
-        }
-        return carteira;
-    }
-
     private CarteiraMembro buscarMembro(Long carteiraId, Long usuarioId) {
         return membroRepository.findByCarteiraIdAndUsuarioId(carteiraId, usuarioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Membro não encontrado"));
-    }
-
-    private void exigirDono(Carteira carteira, Usuario usuario) {
-        if (!carteira.getDono().getId().equals(usuario.getId())) {
-            throw new AccessDeniedException("Somente o dono da carteira pode executar esta ação");
-        }
     }
 
     private List<MemberResponse> listMembros(Long carteiraId) {

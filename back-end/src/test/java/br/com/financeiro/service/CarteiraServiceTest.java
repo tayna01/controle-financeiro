@@ -33,6 +33,9 @@ class CarteiraServiceTest {
     @Mock
     private UsuarioRepository usuarioRepository;
 
+    @Mock
+    private AcessoCarteiraService acessoCarteiraService;
+
     @InjectMocks
     private CarteiraService carteiraService;
 
@@ -51,8 +54,7 @@ class CarteiraServiceTest {
         carteira.setId(10L);
         carteira.setDono(dono);
 
-        when(carteiraRepository.findById(10L)).thenReturn(Optional.of(carteira));
-        when(membroRepository.existsByCarteiraIdAndUsuarioId(10L, 1L)).thenReturn(true);
+        when(acessoCarteiraService.buscarCarteiraComAcesso(dono, 10L)).thenReturn(carteira);
         when(usuarioRepository.findByEmailIgnoreCase("quem@exemplo.com")).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> carteiraService
@@ -67,8 +69,7 @@ class CarteiraServiceTest {
         carteira.setId(10L);
         carteira.setDono(dono);
 
-        when(carteiraRepository.findById(10L)).thenReturn(Optional.of(carteira));
-        when(membroRepository.existsByCarteiraIdAndUsuarioId(10L, 1L)).thenReturn(true);
+        when(acessoCarteiraService.buscarCarteiraComAcesso(dono, 10L)).thenReturn(carteira);
         when(usuarioRepository.findByEmailIgnoreCase("convidado@exemplo.com")).thenReturn(Optional.of(convidado));
         when(membroRepository.existsByCarteiraIdAndUsuarioId(10L, 2L)).thenReturn(true);
 
@@ -84,8 +85,8 @@ class CarteiraServiceTest {
         carteira.setId(10L);
         carteira.setDono(dono);
 
-        when(carteiraRepository.findById(10L)).thenReturn(Optional.of(carteira));
-        when(membroRepository.existsByCarteiraIdAndUsuarioId(10L, 9L)).thenReturn(false);
+        when(acessoCarteiraService.buscarCarteiraComAcesso(outsider, 10L))
+                .thenThrow(new ResourceNotFoundException("Carteira não encontrada"));
 
         assertThrows(ResourceNotFoundException.class, () -> carteiraService.get(outsider, 10L));
     }
