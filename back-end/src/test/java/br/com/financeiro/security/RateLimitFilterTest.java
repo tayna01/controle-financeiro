@@ -2,6 +2,7 @@ package br.com.financeiro.security;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -13,7 +14,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
+import org.springframework.http.MediaType;
 import jakarta.servlet.FilterChain;
 
 class RateLimitFilterTest {
@@ -52,7 +53,11 @@ class RateLimitFilterTest {
         filter.doFilter(requisicao("POST", "/auth/login"), bloqueada, chain);
 
         assertEquals(429, bloqueada.getStatus());
-        assertEquals("application/json", bloqueada.getContentType());
+
+        String contentType = bloqueada.getContentType();
+        assertNotNull(contentType, "Content-Type não deveria ser nulo");
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, contentType.split(";")[0]);
+
         assertTrue(bloqueada.getContentAsString().contains("Muitas tentativas"));
         assertEquals(2, chamadas.get());
     }
