@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,15 +21,11 @@ import br.com.financeiro.dto.TransactionRequest;
 import br.com.financeiro.dto.TransactionResponse;
 import br.com.financeiro.dto.TransactionType;
 import br.com.financeiro.entity.Carteira;
-import br.com.financeiro.entity.CarteiraMembro;
 import br.com.financeiro.entity.Categoria;
-import br.com.financeiro.entity.PapelCarteira;
 import br.com.financeiro.entity.TipoTransacao;
 import br.com.financeiro.entity.Transacao;
 import br.com.financeiro.entity.Usuario;
 import br.com.financeiro.exception.ResourceNotFoundException;
-import br.com.financeiro.repository.CarteiraMembroRepository;
-import br.com.financeiro.repository.CarteiraRepository;
 import br.com.financeiro.repository.CategoriaRepository;
 import br.com.financeiro.repository.TransacaoRepository;
 import br.com.financeiro.util.TextUtil;
@@ -42,19 +37,16 @@ public class TransacaoService {
     private TransacaoRepository transacaoRepository;
 
     @Autowired
-    private CarteiraMembroRepository membroRepository;
-
-    @Autowired
-    private CarteiraRepository carteiraRepository;
-
-    @Autowired
     private CategoriaRepository categoriaRepository;
+
+    @Autowired
+    private AcessoCarteiraService acessoCarteiraService;
 
     @Transactional(readOnly = true)
     public Page<TransactionResponse> list(Usuario usuario, Long carteiraId, TransactionType type,
                                           Long categoryId, LocalDate startDate, LocalDate endDate,
                                           Pageable pageable) {
-        Carteira carteira = buscarCarteiraComAcesso(usuario, carteiraId);
+        Carteira carteira = acessoCarteiraService.buscarCarteiraComAcesso(usuario, carteiraId);
         TipoTransacao tipo = (type == null) ? null : type.toEntity();
         Page<Transacao> pagina = transacaoRepository.listarComFiltros(
                 carteira.getId(), tipo, categoryId, startDate, endDate, traduzirOrdenacao(pageable));
@@ -64,7 +56,7 @@ public class TransacaoService {
 
     @Transactional(readOnly = true)
     public TransactionResponse get(Usuario usuario, Long carteiraId, Long id) {
-        Carteira carteira = buscarCarteiraComAcesso(usuario, carteiraId);
+        Carteira carteira = acessoCarteiraService.buscarCarteiraComAcesso(usuario, carteiraId);
         return toResponse(buscarTransacao(carteira.getId(), id));
     }
 
@@ -84,8 +76,8 @@ public class TransacaoService {
 
     @Transactional
     public TransactionResponse create(Usuario usuario, Long carteiraId, TransactionRequest request) {
-        Carteira carteira = buscarCarteiraComAcesso(usuario, carteiraId);
-        exigirPermissaoEscrita(usuario, carteira);
+        Carteira carteira = acessoCarteiraService.buscarCarteiraComAcesso(usuario, carteiraId);
+        acessoCarteiraService.exigirPermissaoEscrita(usuario, carteira);
 
         Transacao transacao = new Transacao();
         transacao.setCarteira(carteira);
@@ -97,8 +89,8 @@ public class TransacaoService {
 
     @Transactional
     public TransactionResponse update(Usuario usuario, Long carteiraId, Long id, TransactionRequest request) {
-        Carteira carteira = buscarCarteiraComAcesso(usuario, carteiraId);
-        exigirPermissaoEscrita(usuario, carteira);
+        Carteira carteira = acessoCarteiraService.buscarCarteiraComAcesso(usuario, carteiraId);
+        acessoCarteiraService.exigirPermissaoEscrita(usuario, carteira);
 
         Transacao transacao = buscarTransacao(carteira.getId(), id);
         aplicar(transacao, request, usuario);
@@ -108,8 +100,8 @@ public class TransacaoService {
 
     @Transactional
     public void delete(Usuario usuario, Long carteiraId, Long id) {
-        Carteira carteira = buscarCarteiraComAcesso(usuario, carteiraId);
-        exigirPermissaoEscrita(usuario, carteira);
+        Carteira carteira = acessoCarteiraService.buscarCarteiraComAcesso(usuario, carteiraId);
+        acessoCarteiraService.exigirPermissaoEscrita(usuario, carteira);
 
         Transacao transacao = buscarTransacao(carteira.getId(), id);
         transacaoRepository.delete(transacao);
@@ -117,7 +109,7 @@ public class TransacaoService {
 
     @Transactional(readOnly = true)
     public SummaryResponse summary(Usuario usuario, Long carteiraId, LocalDate startDate, LocalDate endDate) {
-        Carteira carteira = buscarCarteiraComAcesso(usuario, carteiraId);
+        Carteira carteira = acessoCarteiraService.buscarCarteiraComAcesso(usuario, carteiraId);
         Page<Transacao> pagina = transacaoRepository.listarComFiltros(
                 carteira.getId(), null, null, startDate, endDate, Pageable.unpaged());
         List<Transacao> transacoes = pagina.getContent();
@@ -180,18 +172,6 @@ public class TransacaoService {
         }
     }
 
-    private Carteira buscarCarteiraComAcesso(Usuario usuario, Long carteiraId) {
-        Carteira carteira = carteiraRepository.findById(carteiraId)
-                .orElseThrow(() -> new ResourceNotFoundException("Carteira não encontrada"));
-
-        boolean dono = carteira.getDono().getId().equals(usuario.getId());
-        boolean membro = membroRepository.existsByCarteiraIdAndUsuarioId(carteiraId, usuario.getId());
-        if (!dono && !membro) {
-            throw new ResourceNotFoundException("Carteira não encontrada");
-        }
-        return carteira;
-    }
-
     private Transacao buscarTransacao(Long carteiraId, Long id) {
         Transacao transacao = transacaoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Transação não encontrada"));
@@ -199,22 +179,6 @@ public class TransacaoService {
             throw new ResourceNotFoundException("Transação não encontrada");
         }
         return transacao;
-    }
-
-    private PapelCarteira papelDoUsuario(Usuario usuario, Carteira carteira) {
-        if (carteira.getDono().getId().equals(usuario.getId())) {
-            return PapelCarteira.DONO;
-        }
-        return membroRepository.findByCarteiraIdAndUsuarioId(carteira.getId(), usuario.getId())
-                .map(CarteiraMembro::getPapel)
-                .orElse(null);
-    }
-
-    private void exigirPermissaoEscrita(Usuario usuario, Carteira carteira) {
-        PapelCarteira papel = papelDoUsuario(usuario, carteira);
-        if (papel == null || papel == PapelCarteira.VISUALIZADOR) {
-            throw new AccessDeniedException("Você não tem permissão para alterar as transações desta carteira");
-        }
     }
 
     private TransactionResponse toResponse(Transacao transacao) {

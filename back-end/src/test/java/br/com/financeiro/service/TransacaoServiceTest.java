@@ -45,6 +45,9 @@ class TransacaoServiceTest {
     @Mock
     private CategoriaRepository categoriaRepository;
 
+    @Mock
+    private AcessoCarteiraService acessoCarteiraService;
+
     @InjectMocks
     private TransacaoService transacaoService;
 
@@ -78,9 +81,9 @@ class TransacaoServiceTest {
         CarteiraMembro membro = new CarteiraMembro();
         membro.setPapel(PapelCarteira.VISUALIZADOR);
 
-        when(carteiraRepository.findById(10L)).thenReturn(Optional.of(carteira));
-        when(membroRepository.existsByCarteiraIdAndUsuarioId(10L, 2L)).thenReturn(true);
-        when(membroRepository.findByCarteiraIdAndUsuarioId(10L, 2L)).thenReturn(Optional.of(membro));
+        when(acessoCarteiraService.buscarCarteiraComAcesso(visualizador, 10L)).thenReturn(carteira);
+        org.mockito.Mockito.doThrow(new AccessDeniedException("Você não tem permissão para alterar as transações desta carteira"))
+                .when(acessoCarteiraService).exigirPermissaoEscrita(visualizador, carteira);
 
         assertThrows(AccessDeniedException.class,
                 () -> transacaoService.create(visualizador, 10L, request(new BigDecimal("50"))));
@@ -94,8 +97,8 @@ class TransacaoServiceTest {
         Usuario outsider = usuario(99L);
         Carteira carteira = carteira(dono, 10L);
 
-        when(carteiraRepository.findById(10L)).thenReturn(Optional.of(carteira));
-        when(membroRepository.existsByCarteiraIdAndUsuarioId(10L, 99L)).thenReturn(false);
+        when(acessoCarteiraService.buscarCarteiraComAcesso(outsider, 10L))
+                .thenThrow(new ResourceNotFoundException("Carteira não encontrada"));
 
         assertThrows(ResourceNotFoundException.class, () -> transacaoService
                 .list(outsider, 10L, null, null, null, null, Pageable.unpaged()));
@@ -110,9 +113,7 @@ class TransacaoServiceTest {
         CarteiraMembro membro = new CarteiraMembro();
         membro.setPapel(PapelCarteira.EDITOR);
 
-        when(carteiraRepository.findById(10L)).thenReturn(Optional.of(carteira));
-        when(membroRepository.existsByCarteiraIdAndUsuarioId(10L, 2L)).thenReturn(true);
-        when(membroRepository.findByCarteiraIdAndUsuarioId(10L, 2L)).thenReturn(Optional.of(membro));
+        when(acessoCarteiraService.buscarCarteiraComAcesso(editor, 10L)).thenReturn(carteira);
         when(transacaoRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         transacaoService.create(editor, 10L, request(new BigDecimal("50")));

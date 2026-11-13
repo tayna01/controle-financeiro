@@ -72,8 +72,8 @@ public class CarteiraService {
 
     @Transactional
     public WalletResponse update(Usuario usuario, Long id, WalletRequest request) {
-        Carteira carteira = buscarComAcesso(usuario, id);
-        exigirDono(carteira, usuario);
+        Carteira carteira = acessoCarteiraService.buscarCarteiraComAcesso(usuario, id);
+        acessoCarteiraService.exigirDono(usuario, carteira);
 
         carteira.setNome(TextUtil.trimToNull(request.getName()));
         carteira.setDescricao(TextUtil.trimToNull(request.getDescription()));
@@ -82,8 +82,8 @@ public class CarteiraService {
 
     @Transactional
     public void delete(Usuario usuario, Long id) {
-        Carteira carteira = buscarComAcesso(usuario, id);
-        exigirDono(carteira, usuario);
+        Carteira carteira = acessoCarteiraService.buscarCarteiraComAcesso(usuario, id);
+        acessoCarteiraService.exigirDono(usuario, carteira);
         carteiraRepository.delete(carteira);
     }
 

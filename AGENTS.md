@@ -30,3 +30,16 @@ Dois aplicativos independentes e um README na raiz do repositório em português
 - `src/components/ui/*` são primitivos do shadcn/ui (Radix) — trate como biblioteca de componentes; construa componentes específicos da aplicação sobre eles em vez de editá-los casualmente.
 - Os schemas do Zod (`emailSchema`, `passwordSchema`, ...) são compartilhados a partir de `src/lib/validation.ts` — estenda lá em vez de redefinir validação em cada tela.
 - As rotas ficam em `src/App.tsx`; as páginas autenticadas ficam sob `/app/*` dentro de `RequireAuth` + `WalletProvider` (carteiras selecionadas globalmente via contexto de carteira).
+
+## Regras de refatoração
+- Faça uma mudança por vez e não altere comportamento externo
+- Antes de editar, explique o plano em poucas linhas e espere confirmação
+- Não altere endpoints, nomes de campos de DTO nem rotas do front
+- Nunca retorne entidade JPA em controller, use DTO
+- Controller só delega; regra de negócio e checagem de acesso ficam no service
+- Não deixe lógica de negócio nem chamada HTTP dentro de componente React
+- Ao terminar, rode os testes e diga o que mudou e por quê, em linguagem simples
+- Não crie arquivos nem dependências além do que foi pedido
+- Não faça commit nem push, quem faz commit sou eu
+- Leia apenas os arquivos necessários para a tarefa, não varra o projeto inteiro
+- Verificação ao terminar: back com `./mvnw test`, front com `npm run lint && npm run build`
