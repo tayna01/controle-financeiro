@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { isAxiosError } from 'axios'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -12,7 +11,7 @@ import { AuthAside } from '@/components/auth-aside'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { resetPassword } from '@/services/auth'
 import { useToast } from '@/hooks/use-toast'
-import { getApiErrorMessage } from '@/lib/api'
+
 import { passwordSchema, requiredString } from '@/lib/validation'
 
 const resetPasswordSchema = z
@@ -52,18 +51,12 @@ export function ResetPassword() {
       })
     } catch (error) {
       setLoading(false)
-      if (isAxiosError(error) && error.response?.status === 400) {
-        toast({
-          title: 'Link inválido',
-          description:
-            'Link inválido ou expirado. Solicite um novo link para continuar.',
-          variant: 'destructive',
-        })
-        return
-      }
       toast({
-        title: 'Erro ao redefinir a senha',
-        description: getApiErrorMessage(error, 'Falha ao redefinir a senha'),
+        title: 'Invalid link',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Invalid or expired link. Request a new link to continue.',
         variant: 'destructive',
       })
     }

@@ -1,5 +1,5 @@
 import { api, getApiErrorMessage } from '@/lib/api'
-import { getOrCreateDefaultWallet } from '@/services/wallets'
+import { resolveWalletId } from '@/services/wallets'
 
 export type WalletRole = 'OWNER' | 'EDITOR' | 'VIEWER'
 
@@ -62,10 +62,6 @@ function getUserFriendlyMessage(error: unknown, fallback: string): string {
   }
 
   return message
-}
-
-async function resolveWalletId(): Promise<number> {
-  return getOrCreateDefaultWallet()
 }
 
 export async function fetchWalletMembers(): Promise<WalletMember[]> {

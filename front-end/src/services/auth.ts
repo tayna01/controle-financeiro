@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { api, getApiErrorMessage } from '@/lib/api'
 
 const TOKEN_KEY = 'token'
@@ -98,9 +99,16 @@ export async function forgotPassword(
 }
 
 export async function resetPassword(token: string, newPassword: string): Promise<string> {
-  const { data } = await api.post<{ message: string }>('/auth/reset-password', {
-    token,
-    newPassword,
-  })
-  return data.message
+  try {
+    const { data } = await api.post<{ message: string }>('/auth/reset-password', {
+      token,
+      newPassword,
+    })
+    return data.message
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 400) {
+      throw new Error('Invalid or expired link. Request a new link to continue.', { cause: error })
+    }
+    throw new Error(getApiErrorMessage(error, 'Failed to reset password'), { cause: error })
+  }
 }

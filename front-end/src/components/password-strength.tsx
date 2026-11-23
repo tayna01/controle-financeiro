@@ -21,7 +21,6 @@ const STRENGTH_RULES: StrengthRule[] = [
 const TOTAL_SEGMENTS = 4
 
 export function PasswordStrength({ password }: PasswordStrengthProps) {
-  console.log('PasswordStrength rendered with password:', password)
   if (!password) return null
 
   const metCount = STRENGTH_RULES.filter((rule) => rule.test(password)).length

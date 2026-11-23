@@ -7,11 +7,13 @@ import {
   type WalletMember,
   type WalletRole,
 } from '@/services/wallet-sharing'
+import { useAuth } from '@/contexts/auth-context'
 import { useWallet } from '@/contexts/wallet-context'
 import { toast } from '@/hooks/use-toast'
 
 export function useWalletSharing() {
   const { selectedWallet } = useWallet()
+  const { user } = useAuth()
   const walletId = selectedWallet?.id
   const [members, setMembers] = useState<WalletMember[]>([])
   const [loading, setLoading] = useState(true)
@@ -24,7 +26,9 @@ export function useWalletSharing() {
   const [changingRoleId, setChangingRoleId] = useState<number | null>(null)
   const [pendingRemove, setPendingRemove] = useState<WalletMember | null>(null)
 
-  const isOwner = members.some((member) => member.role === 'OWNER')
+  const isOwner = members.some(
+    (member) => member.role === 'OWNER' && member.email === user?.email,
+  )
   const walletName = selectedWallet?.name ?? ''
 
   const load = useCallback(async () => {

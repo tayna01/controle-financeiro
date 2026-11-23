@@ -98,6 +98,10 @@ export async function ensureOwnedDefaultWallet(
   return ensuringDefault
 }
 
+export async function resolveWalletId(): Promise<number> {
+  return getOrCreateDefaultWallet()
+}
+
 export async function getOrCreateDefaultWallet(): Promise<number> {
   const cached = getCachedWalletId()
   if (cached) {

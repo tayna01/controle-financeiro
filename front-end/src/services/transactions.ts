@@ -1,5 +1,5 @@
 import { api } from '@/lib/api'
-import { getOrCreateDefaultWallet } from '@/services/wallets'
+import { resolveWalletId } from '@/services/wallets'
 
 export type TransactionType = 'income' | 'expense'
 
@@ -60,10 +60,6 @@ function toTransaction(response: TransactionResponse): Transaction {
     category: response.categoryName ?? '',
     date: response.date,
   }
-}
-
-async function resolveWalletId(): Promise<number> {
-  return getOrCreateDefaultWallet()
 }
 
 export async function fetchTransactions(

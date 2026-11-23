@@ -83,7 +83,7 @@ export function Dashboard() {
     <div className="space-y-6">
       <PageHeader
         title="Dashboard"
-        description="Resumo financeiro de agosto de 2026"
+        description="Resumo financeiro da carteira selecionada"
         breadcrumbs={[
           { label: 'Início', to: '/app/dashboard' },
           { label: 'Dashboard' },
