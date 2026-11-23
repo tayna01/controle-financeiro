@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -30,6 +30,7 @@ export function Login() {
   const { isAuthenticated, login } = useAuth()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
+  const shownRef = useRef(false)
   const {
     register,
     handleSubmit,
@@ -41,7 +42,8 @@ export function Login() {
   )?.successMessage
 
   useEffect(() => {
-    if (successMessage) {
+    if (successMessage && !shownRef.current) {
+      shownRef.current = true
       toast({ title: 'Sucesso', description: successMessage })
     }
   }, [successMessage, toast])
@@ -62,6 +64,7 @@ export function Login() {
           error instanceof Error ? error.message : 'Falha ao entrar',
         variant: 'destructive',
       })
+    } finally {
       setLoading(false)
     }
   }

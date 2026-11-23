@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import React, { type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Breadcrumb,
@@ -39,16 +39,18 @@ export function PageHeader({
               {breadcrumbs.map((item, index) => {
                 const isLast = index === breadcrumbs.length - 1
                 return (
-                  <BreadcrumbItem key={item.label}>
-                    {item.to && !isLast ? (
-                      <BreadcrumbLink asChild>
-                        <Link to={item.to}>{item.label}</Link>
-                      </BreadcrumbLink>
-                    ) : (
-                      <BreadcrumbPage>{item.label}</BreadcrumbPage>
-                    )}
+                  <React.Fragment key={item.label}>
+                    <BreadcrumbItem>
+                      {item.to && !isLast ? (
+                        <BreadcrumbLink asChild>
+                          <Link to={item.to}>{item.label}</Link>
+                        </BreadcrumbLink>
+                      ) : (
+                        <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                      )}
+                    </BreadcrumbItem>
                     {!isLast && <BreadcrumbSeparator />}
-                  </BreadcrumbItem>
+                  </React.Fragment>
                 )
               })}
             </BreadcrumbList>
