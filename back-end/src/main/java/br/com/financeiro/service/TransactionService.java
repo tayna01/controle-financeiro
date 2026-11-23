@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,9 @@ public class TransactionService {
 
     @Autowired
     private WalletAccessService walletAccessService;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public Page<TransactionResponse> list(User user, Long walletId, TransactionType type,
@@ -77,7 +81,10 @@ public class TransactionService {
         apply(transaction, request, user);
         transaction.setCreatedBy(user);
 
-        return toResponse(transactionRepository.save(transaction));
+        Transaction saved = transactionRepository.save(transaction);
+        eventPublisher.publishEvent(new br.com.financeiro.event.TransactionChangedEvent(
+                wallet.getId(), saved.getId(), "CREATED", user.getName()));
+        return toResponse(saved);
     }
 
     @Transactional
@@ -88,7 +95,10 @@ public class TransactionService {
         Transaction transaction = findTransaction(wallet.getId(), id);
         apply(transaction, request, user);
 
-        return toResponse(transactionRepository.save(transaction));
+        Transaction saved = transactionRepository.save(transaction);
+        eventPublisher.publishEvent(new br.com.financeiro.event.TransactionChangedEvent(
+                wallet.getId(), saved.getId(), "UPDATED", user.getName()));
+        return toResponse(saved);
     }
 
     @Transactional
@@ -97,7 +107,10 @@ public class TransactionService {
         walletAccessService.requireWritePermission(user, wallet);
 
         Transaction transaction = findTransaction(wallet.getId(), id);
+        Long transactionId = transaction.getId();
         transactionRepository.delete(transaction);
+        eventPublisher.publishEvent(new br.com.financeiro.event.TransactionChangedEvent(
+                wallet.getId(), transactionId, "DELETED", user.getName()));
     }
 
     private void apply(Transaction transaction, TransactionRequest request, User user) {

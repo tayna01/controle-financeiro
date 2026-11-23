@@ -12,7 +12,9 @@ import {
   type Transaction,
 } from '@/services/transactions'
 import { useWallet } from '@/contexts/wallet-context'
-import { getApiErrorMessage } from '@/lib/api'
+import { api, getApiErrorMessage } from '@/lib/api'
+import { fetchEventSource } from '@microsoft/fetch-event-source'
+import { useToast } from '@/hooks/use-toast'
 
 function DashboardSkeleton() {
   return (
@@ -36,6 +38,7 @@ interface Failure {
 }
 
 export function Dashboard() {
+  const { toast } = useToast()
   const {
     selectedWallet,
     loading: walletLoading,
@@ -74,6 +77,46 @@ export function Dashboard() {
       active = false
     }
   }, [walletId])
+
+  useEffect(() => {
+    if (!walletId) return
+    const token = localStorage.getItem('token')
+    const controller = new AbortController()
+
+    fetchEventSource(`${api.defaults.baseURL}/api/v1/wallets/${walletId}/events`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      signal: controller.signal,
+      onmessage(event) {
+        if (event.event !== 'transaction-changed') return
+        try {
+          const payload = JSON.parse(event.data) as {
+            action: string
+            actorName: string
+          }
+          Promise.all([fetchSummary(walletId), fetchTransactions(walletId)])
+            .then(([summaryData, transactionData]) => {
+              setSummary(summaryData)
+              setTransactions(transactionData)
+              setLoadedWalletId(walletId)
+            })
+            .catch(() => {})
+          const verb =
+            payload.action === 'CREATED'
+              ? 'added'
+              : payload.action === 'UPDATED'
+                ? 'updated'
+                : 'deleted'
+          toast({
+            title: `${payload.actorName} ${verb} a transaction`,
+          })
+        } catch {
+          // ignore malformed events
+        }
+      },
+    }).catch(() => {})
+
+    return () => controller.abort()
+  }, [walletId, toast])
 
   const walletReady = walletId !== null && loadedWalletId === walletId
   const walletFailure =

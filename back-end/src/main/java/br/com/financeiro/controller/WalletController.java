@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import br.com.financeiro.dto.MemberRequest;
 import br.com.financeiro.dto.MemberResponse;
@@ -22,6 +24,8 @@ import br.com.financeiro.dto.WalletRequest;
 import br.com.financeiro.dto.WalletResponse;
 import br.com.financeiro.entity.User;
 import br.com.financeiro.security.CurrentUserProvider;
+import br.com.financeiro.service.WalletAccessService;
+import br.com.financeiro.service.WalletEventPublisher;
 import br.com.financeiro.service.WalletService;
 import jakarta.validation.Valid;
 
@@ -31,6 +35,12 @@ public class WalletController {
 
     @Autowired
     private WalletService walletService;
+
+    @Autowired
+    private WalletEventPublisher walletEventPublisher;
+
+    @Autowired
+    private WalletAccessService walletAccessService;
 
     @Autowired
     private CurrentUserProvider currentUserProvider;
@@ -82,6 +92,13 @@ public class WalletController {
     public ResponseEntity<Void> removeMember(@PathVariable Long id, @PathVariable Long userId) {
         walletService.removeMember(currentUser(), id, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(value = "/{id}/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter events(@PathVariable Long id) {
+        User user = currentUserProvider.getCurrentUser();
+        walletAccessService.findWalletWithAccess(user, id);
+        return walletEventPublisher.subscribe(id);
     }
 
     private User currentUser() {
