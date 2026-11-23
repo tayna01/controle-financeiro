@@ -1,5 +1,6 @@
 package br.com.financeiro.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,10 @@ import br.com.financeiro.entity.User;
 import br.com.financeiro.security.CurrentUserProvider;
 import br.com.financeiro.service.WalletAccessService;
 import br.com.financeiro.service.WalletEventPublisher;
+import br.com.financeiro.repository.TransactionRepository;
+import br.com.financeiro.report.CsvReportGenerator;
+import br.com.financeiro.report.PdfReportGenerator;
+import br.com.financeiro.report.ReportGenerator;
 import br.com.financeiro.service.WalletService;
 import jakarta.validation.Valid;
 
@@ -41,6 +47,9 @@ public class WalletController {
 
     @Autowired
     private WalletAccessService walletAccessService;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @Autowired
     private CurrentUserProvider currentUserProvider;
@@ -99,6 +108,34 @@ public class WalletController {
         User user = currentUserProvider.getCurrentUser();
         walletAccessService.findWalletWithAccess(user, id);
         return walletEventPublisher.subscribe(id);
+    }
+
+    @GetMapping("/reports/statement")
+    public ResponseEntity<byte[]> statement(@PathVariable Long id,
+            @RequestParam(value = "startDate", required = false) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) LocalDate endDate,
+            @RequestParam(value = "format", defaultValue = "csv") String format) {
+        User user = currentUserProvider.getCurrentUser();
+        Wallet wallet = walletAccessService.findWalletWithAccess(user, id);
+
+        LocalDate start = startDate != null ? startDate : LocalDate.now().withDayOfMonth(1);
+        LocalDate end = endDate != null ? endDate : LocalDate.now();
+
+        var page = transactionRepository.listWithFilters(wallet.getId(), null, null, start, end,
+                org.springframework.data.domain.Pageable.unpaged());
+        java.util.List<br.com.financeiro.entity.Transaction> transactions = page.getContent();
+
+        ReportGenerator generator = "pdf".equalsIgnoreCase(format)
+                ? new PdfReportGenerator()
+                : new CsvReportGenerator();
+
+        byte[] content = generator.generate(wallet, transactions, start, end);
+
+        return ResponseEntity.ok()
+                .contentType(org.springframework.http.MediaType.parseMediaType(generator.contentType()))
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=extrato." + generator.fileExtension())
+                .body(content);
     }
 
     private User currentUser() {

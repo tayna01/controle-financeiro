@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import {
   ArrowLeftRight,
   ChevronsLeft,
+  FileDown,
   ChevronsRight,
   LayoutDashboard,
   LogOut,
@@ -33,6 +34,7 @@ const NAV_ITEMS = [
   { to: '/app/transacoes', label: 'Transações', icon: ArrowLeftRight },
   { to: '/app/categorias', label: 'Categorias', icon: Tags },
   { to: '/app/compartilhamento', label: 'Compartilhamento', icon: Users },
+  { to: '/app/relatorios', label: 'Relatórios', icon: FileDown },
   { to: '/app/perfil', label: 'Perfil', icon: UserRound },
 ]
 

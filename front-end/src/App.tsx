@@ -8,6 +8,7 @@ import { Dashboard } from '@/pages/Dashboard'
 import { ForgotPassword } from '@/pages/ForgotPassword'
 import { Login } from '@/pages/Login'
 import { Profile } from '@/pages/Profile'
+import { Reports } from '@/pages/Reports'
 import { Register } from '@/pages/Register'
 import { ResetPassword } from '@/pages/ResetPassword'
 import { Sharing } from '@/pages/Sharing'
@@ -34,6 +35,7 @@ function App() {
           <Route path="/app/categorias" element={<Categories />} />
           <Route path="/app/compartilhamento" element={<Sharing />} />
           <Route path="/app/perfil" element={<Profile />} />
+          <Route path="/app/relatorios" element={<Reports />} />
           <Route path="/app/perfil/senha" element={<ChangePassword />} />
         </Route>
       </Route>
