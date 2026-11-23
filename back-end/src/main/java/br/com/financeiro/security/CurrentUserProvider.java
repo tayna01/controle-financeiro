@@ -16,7 +16,12 @@ public class CurrentUserProvider {
     private UsuarioRepository usuarioRepository;
 
     public Usuario getCurrentUser() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getPrincipal() == null) {
+            throw new ResourceNotFoundException("Usuário autenticado não encontrado");
+        }
+
+        Object principal = authentication.getPrincipal();
         String username;
 
         if (principal instanceof UserDetails) {

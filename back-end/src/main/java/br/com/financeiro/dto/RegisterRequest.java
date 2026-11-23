@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class RegisterRequest {
 
     @NotBlank(message = "Nome é obrigatório")
-    @Size(max = 100, message = "Nome deve ter no máximo 100 caracteres")
+    @Size(min = 2, max = 100, message = "Nome deve ter entre 2 e 100 caracteres")
     private String name;
 
     @NotBlank(message = "E-mail é obrigatório")

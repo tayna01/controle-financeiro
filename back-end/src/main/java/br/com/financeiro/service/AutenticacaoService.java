@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -44,6 +45,9 @@ public class AutenticacaoService implements UserDetailsService {
 
     private static final String MENSAGEM_NEUTRA = "Se este e-mail estiver cadastrado, você receberá as instruções em breve.";
 
+    @Value("${app.debug-tokens:false}")
+    private boolean debugTokensHabilitados;
+
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -66,6 +70,11 @@ public class AutenticacaoService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return usuarioRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+    }
+
+    public UserDetails loadUserById(Long id) {
+        return usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
     }
 
@@ -94,7 +103,10 @@ public class AutenticacaoService implements UserDetailsService {
             throw new BadCredentialsException("Credenciais inválidas");
         }
 
-        String accessToken = jwtService.generateToken(request.getEmail());
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(request.getEmail())
+                .orElseThrow(() -> new BadCredentialsException("Credenciais inválidas"));
+
+        String accessToken = jwtService.generateToken(usuario);
         return new AuthResponse(accessToken, "Bearer", jwtService.getExpirationSeconds());
     }
 
@@ -117,7 +129,9 @@ public class AutenticacaoService implements UserDetailsService {
             token.setUtilizado(false);
             tokenRepository.save(token);
 
-            debugToken = token.getToken();
+            if (debugTokensHabilitados) {
+                debugToken = token.getToken();
+            }
         }
         return new ForgotPasswordResponse(MENSAGEM_NEUTRA, debugToken);
     }

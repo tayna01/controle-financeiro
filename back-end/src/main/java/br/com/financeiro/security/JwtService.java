@@ -2,11 +2,11 @@ package br.com.financeiro.security;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import br.com.financeiro.entity.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -29,29 +29,39 @@ public class JwtService {
         key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    public String generateToken(String username) {
+    public String generateToken(Usuario usuario) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(String.valueOf(usuario.getId()))
+                .claim("email", usuario.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public Boolean validateToken(String token, String username) {
-        String extractedUsername = extractUsername(token);
-        return (username.equals(extractedUsername) && !isTokenExpired(token));
+    public Long extractUserId(String token) {
+        String subject = extractClaim(token, Claims::getSubject);
+        return Long.valueOf(subject);
     }
 
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+    public String extractEmail(String token) {
+        return extractClaim(token, claims -> claims.get("email", String.class));
+    }
+
+    public boolean isTokenValid(String token, String email) {
+        try {
+            String extractedEmail = extractEmail(token);
+            return email.equals(extractedEmail) && !isTokenExpired(token);
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     public Long getExpirationSeconds() {
         return expiration / 1000;
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    public <T> T extractClaim(String token, java.util.function.Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
@@ -64,7 +74,7 @@ public class JwtService {
                 .getBody();
     }
 
-    private Boolean isTokenExpired(String token) {
+    private boolean isTokenExpired(String token) {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 }

@@ -152,13 +152,16 @@ public class CarteiraService {
     }
 
     private MemberResponse toMemberResponse(CarteiraMembro membro) {
-        Usuario usuario = membro.getUsuario();
+        return toMemberResponse(membro.getUsuario(), membro.getPapel(), membro.getEntradoEm());
+    }
+
+    private MemberResponse toMemberResponse(Usuario usuario, PapelCarteira papel, java.time.LocalDateTime joinedAt) {
         return new MemberResponse(
                 usuario.getId(),
                 usuario.getNome(),
                 usuario.getEmail(),
-                membro.getPapel().name(),
-                membro.getEntradoEm()
+                papel.name(),
+                joinedAt
         );
     }
 
@@ -184,12 +187,6 @@ public class CarteiraService {
     }
 
     private MemberResponse ownerFallback(Carteira carteira) {
-        return new MemberResponse(
-                carteira.getDono().getId(),
-                carteira.getDono().getNome(),
-                carteira.getDono().getEmail(),
-                PapelCarteira.DONO.name(),
-                carteira.getCriadoEm()
-        );
+        return toMemberResponse(carteira.getDono(), PapelCarteira.DONO, carteira.getCriadoEm());
     }
 }

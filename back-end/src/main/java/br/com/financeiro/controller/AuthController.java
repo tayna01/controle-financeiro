@@ -2,10 +2,10 @@ package br.com.financeiro.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.financeiro.dto.AuthResponse;
@@ -27,23 +27,22 @@ public class AuthController {
     private AutenticacaoService autenticacaoService;
 
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserResponse register(@Valid @RequestBody RegisterRequest request) {
-        return autenticacaoService.register(request);
+    public ResponseEntity<UserResponse> register(@Valid @RequestBody RegisterRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(autenticacaoService.register(request));
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@Valid @RequestBody LoginRequest request) {
-        return autenticacaoService.login(request);
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(autenticacaoService.login(request));
     }
 
     @PostMapping("/forgot-password")
-    public ForgotPasswordResponse forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
-        return autenticacaoService.forgotPassword(request);
+    public ResponseEntity<ForgotPasswordResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        return ResponseEntity.ok(autenticacaoService.forgotPassword(request));
     }
 
     @PostMapping("/reset-password")
-    public MessageResponse resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
-        return autenticacaoService.resetPassword(request);
+    public ResponseEntity<MessageResponse> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        return ResponseEntity.ok(autenticacaoService.resetPassword(request));
     }
 }

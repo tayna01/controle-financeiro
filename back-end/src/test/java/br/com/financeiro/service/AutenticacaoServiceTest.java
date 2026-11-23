@@ -93,8 +93,14 @@ class AutenticacaoServiceTest {
 
     @Test
     void loginComSucessoRetornaToken() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        usuario.setNome("Ana");
+        usuario.setEmail("ana@exemplo.com");
+
         when(authenticationManager.authenticate(any())).thenAnswer(inv -> inv.getArgument(0));
-        when(jwtService.generateToken("ana@exemplo.com")).thenReturn("token-de-teste");
+        when(usuarioRepository.findByEmailIgnoreCase("ana@exemplo.com")).thenReturn(java.util.Optional.of(usuario));
+        when(jwtService.generateToken(any(Usuario.class))).thenReturn("token-de-teste");
         when(jwtService.getExpirationSeconds()).thenReturn(86400L);
 
         AuthResponse resposta = autenticacaoService.login(new LoginRequest("ana@exemplo.com", "SenhaForte@1"));
