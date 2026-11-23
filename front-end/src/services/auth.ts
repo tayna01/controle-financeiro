@@ -34,10 +34,16 @@ export async function login(email: string, senha: string): Promise<SessionUser> 
     })
     localStorage.setItem(TOKEN_KEY, data.accessToken)
 
-    const profile = await api.get<UserResponse>('/api/v1/users/me')
-    const sessionUser = toSessionUser(profile.data)
-    localStorage.setItem(USER_KEY, JSON.stringify(sessionUser))
-    return sessionUser
+    try {
+      const profile = await api.get<UserResponse>('/api/v1/users/me')
+      const sessionUser = toSessionUser(profile.data)
+      localStorage.setItem(USER_KEY, JSON.stringify(sessionUser))
+      return sessionUser
+    } catch {
+      const sessionUser = { nome: email, email }
+      localStorage.setItem(USER_KEY, JSON.stringify(sessionUser))
+      return sessionUser
+    }
   } catch (error) {
     throw new Error(getApiErrorMessage(error, 'E-mail ou senha inválidos'), {
       cause: error,
