@@ -49,9 +49,6 @@ build/
 
 docs/
 
-# Segredos locais
-application-secrets.properties
-**/application-secrets.properties
 # Arquivos com informações sensíveis
 application-secrets.properties
 **/application-secrets.properties
