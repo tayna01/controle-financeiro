@@ -148,6 +148,18 @@ back-end/src/main/java/br/com/financeiro/
 | `/app/perfil/senha` | Autenticado | Alterar senha |
 | `/app/configuracoes` | Autenticado | Configurações |
 
+## Links de Produção
+
+- Front-end (Vercel): https://front-end-deploy-67ph.vercel.app
+- Back-end (Render): https://financeiro-backend-wvkl.onrender.com
+- Health check: https://financeiro-backend-wvkl.onrender.com/actuator/health
+
+### Arquitetura de deploy
+- Banco de dados PostgreSQL no Neon.
+- Back-end empacotado em imagem Docker (Docker Hub) e hospedado na Render.
+- Front-end hospedado na Vercel.
+- Variáveis de ambiente configuradas na Render (DB_URL, DB_USERNAME, DB_PASSWORD, JWT_SECRET, CORS_ALLOWED_ORIGINS, APP_DEBUG_TOKENS) e na Vercel (VITE_API_URL).
+
 ## Decisões de projeto
 
 - **Sessão persistida no `localStorage`** — o token JWT e os dados do usuário são armazenados no `localStorage`; ao recarregar a página a sessão continua ativa.
