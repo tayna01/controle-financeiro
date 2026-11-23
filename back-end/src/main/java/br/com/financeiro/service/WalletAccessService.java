@@ -25,7 +25,7 @@ public class WalletAccessService {
 
     public Wallet findWalletWithAccess(User user, Long walletId) {
         Wallet wallet = walletRepository.findById(walletId)
-                .orElseThrow(() -> new ResourceNotFoundException("Wallet not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Carteira não encontrada"));
 
         boolean owner = wallet.getOwner().getId().equals(user.getId());
         boolean member = memberRepository.existsByWalletIdAndUserId(walletId, user.getId());
@@ -41,19 +41,19 @@ public class WalletAccessService {
         }
         return memberRepository.findByWalletIdAndUserId(wallet.getId(), user.getId())
                 .map(WalletMember::getRole)
-                .orElseThrow(() -> new ResourceNotFoundException("Wallet not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Carteira não encontrada"));
     }
 
     public void requireOwner(User user, Wallet wallet) {
         if (!wallet.getOwner().getId().equals(user.getId())) {
-            throw new AccessDeniedException("Only the wallet owner can perform this action");
+            throw new AccessDeniedException("Somente o dono da carteira pode executar esta ação");
         }
     }
 
     public void requireWritePermission(User user, Wallet wallet) {
         WalletRole role = roleOf(user, wallet);
         if (role == WalletRole.VIEWER) {
-            throw new AccessDeniedException("You do not have permission to change transactions in this wallet");
+            throw new AccessDeniedException("Você não tem permissão para alterar as transações desta carteira");
         }
     }
 }

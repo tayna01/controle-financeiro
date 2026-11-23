@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MemberRoleRequest {
 
-    @NotNull(message = "Role is required")
+    @NotNull(message = "Papel é obrigatório")
     private WalletRole role;
 }

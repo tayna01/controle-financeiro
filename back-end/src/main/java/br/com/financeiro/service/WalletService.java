@@ -100,10 +100,10 @@ public class WalletService {
         walletAccessService.requireOwner(user, wallet);
 
         User guest = userRepository.findByEmailIgnoreCase(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with the provided email"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o e-mail informado"));
 
         if (memberRepository.existsByWalletIdAndUserId(walletId, guest.getId())) {
-            throw new ConflictException("User is already a member of this wallet");
+            throw new ConflictException("Usuário já é membro da carteira");
         }
 
         WalletMember member = new WalletMember();
@@ -120,7 +120,7 @@ public class WalletService {
 
         WalletMember member = findMember(walletId, userId);
         if (member.getRole() == WalletRole.OWNER) {
-            throw new BusinessException("Cannot change the role of the wallet owner");
+            throw new BusinessException("Não é possível alterar o papel do dono da carteira");
         }
         member.setRole(request.getRole());
         return toMemberResponse(memberRepository.save(member));
@@ -133,14 +133,14 @@ public class WalletService {
 
         WalletMember member = findMember(walletId, userId);
         if (member.getRole() == WalletRole.OWNER) {
-            throw new BusinessException("Cannot remove the wallet owner");
+            throw new BusinessException("Não é possível remover o dono da carteira");
         }
         memberRepository.delete(member);
     }
 
     private WalletMember findMember(Long walletId, Long userId) {
         return memberRepository.findByWalletIdAndUserId(walletId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Member not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Membro não encontrado"));
     }
 
     private List<MemberResponse> listMembers(Long walletId) {

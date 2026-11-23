@@ -14,16 +14,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CategoryRequest {
 
-    @NotBlank(message = "Name is required")
-    @Size(max = 80, message = "Name must have at most 80 characters")
+    @NotBlank(message = "Nome é obrigatório")
+    @Size(max = 80, message = "Nome deve ter no máximo 80 caracteres")
     private String name;
 
-    @NotNull(message = "Type is required")
+    @NotNull(message = "Tipo é obrigatório")
     private TransactionType type;
 
-    @Pattern(regexp = "^#[0-9A-Fa-f]{6}$", message = "Color must be in #RRGGBB format")
+    @Pattern(regexp = "^#[0-9A-Fa-f]{6}$", message = "Cor deve estar no formato #RRGGBB")
     private String color;
 
-    @Size(max = 50, message = "Icon must have at most 50 characters")
+    @Size(max = 50, message = "Ícone deve ter no máximo 50 caracteres")
     private String icon;
 }

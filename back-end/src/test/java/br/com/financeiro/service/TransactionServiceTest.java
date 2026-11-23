@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,7 +68,8 @@ class TransactionServiceTest {
         Wallet wallet = wallet(owner, 10L);
 
         when(walletAccessService.findWalletWithAccess(viewer, 10L)).thenReturn(wallet);
-        org.mockito.Mockito.doThrow(new AccessDeniedException("You do not have permission to change transactions in this wallet"))
+        org.mockito.Mockito
+                .doThrow(new AccessDeniedException("You do not have permission to change transactions in this wallet"))
                 .when(walletAccessService).requireWritePermission(viewer, wallet);
 
         assertThrows(AccessDeniedException.class,

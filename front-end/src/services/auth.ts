@@ -107,8 +107,8 @@ export async function resetPassword(token: string, newPassword: string): Promise
     return data.message
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 400) {
-      throw new Error('Invalid or expired link. Request a new link to continue.', { cause: error })
+      throw new Error('Link inválido ou expirado. Solicite um novo link para continuar.', { cause: error })
     }
-    throw new Error(getApiErrorMessage(error, 'Failed to reset password'), { cause: error })
+    throw new Error(getApiErrorMessage(error, 'Falha ao redefinir a senha'), { cause: error })
   }
 }

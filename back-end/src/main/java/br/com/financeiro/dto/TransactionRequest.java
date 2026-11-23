@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TransactionRequest {
 
-    @NotNull(message = "Type is required")
+    @NotNull(message = "Tipo é obrigatório")
     private TransactionType type;
 
     @NotNull(message = "Valor é obrigatório")

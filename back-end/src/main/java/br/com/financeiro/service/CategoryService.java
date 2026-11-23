@@ -67,19 +67,19 @@ public class CategoryService {
     public void delete(User user, Long id) {
         Category category = find(user, id);
         if (transactionRepository.existsByCategoryId(id)) {
-            throw new BusinessException("Cannot delete: category has linked transactions");
+            throw new BusinessException("Não é possível excluir: categoria possui transações vinculadas");
         }
         categoryRepository.delete(category);
     }
 
     private Category find(User user, Long id) {
         return categoryRepository.findByIdAndUserId(id, user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
     }
 
     private void checkDuplicateName(Long userId, String name, Long idToIgnore) {
         if (categoryRepository.existsByUserIdAndNameIgnoreCase(userId, name, idToIgnore)) {
-            throw new ConflictException("A category with this name already exists");
+            throw new ConflictException("Já existe uma categoria com este nome");
         }
     }
 

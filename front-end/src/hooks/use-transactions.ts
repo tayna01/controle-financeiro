@@ -86,10 +86,10 @@ export function useTransactions() {
     try {
       if (editingId) {
         await updateTransaction(editingId, input)
-        toast({ title: 'Transaction updated' })
+        toast({ title: 'Transação atualizada' })
       } else {
         await createTransaction(input)
-        toast({ title: 'Transaction created' })
+        toast({ title: 'Transação cadastrada com sucesso' })
       }
       setDialogOpen(false)
       await reload()
@@ -125,7 +125,7 @@ export function useTransactions() {
     setDeletingId(transactionId)
     try {
       await deleteTransaction(transactionId)
-      toast({ title: 'Transaction deleted' })
+      toast({ title: 'Transação excluída' })
       await reload()
     } catch (error) {
       const message = getApiErrorMessage(

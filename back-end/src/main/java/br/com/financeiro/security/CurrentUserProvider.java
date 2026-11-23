@@ -18,7 +18,7 @@ public class CurrentUserProvider {
     public User getCurrentUser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getPrincipal() == null) {
-            throw new ResourceNotFoundException("Authenticated user not found");
+            throw new ResourceNotFoundException("Usuário autenticado não encontrado");
         }
 
         Object principal = authentication.getPrincipal();
@@ -31,6 +31,6 @@ public class CurrentUserProvider {
         }
 
         return userRepository.findByEmailIgnoreCase(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Authenticated user not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário autenticado não encontrado"));
     }
 }

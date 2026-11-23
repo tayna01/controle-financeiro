@@ -52,11 +52,11 @@ export function ResetPassword() {
     } catch (error) {
       setLoading(false)
       toast({
-        title: 'Invalid link',
+        title: 'Link inválido',
         description:
           error instanceof Error
             ? error.message
-            : 'Invalid or expired link. Request a new link to continue.',
+            : 'Link inválido ou expirado. Solicite um novo link para continuar.',
         variant: 'destructive',
       })
     }

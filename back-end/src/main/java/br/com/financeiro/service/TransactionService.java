@@ -108,7 +108,7 @@ public class TransactionService {
 
         if (request.getCategoryId() != null) {
             Category category = categoryRepository.findByIdAndUserId(request.getCategoryId(), user.getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
             transaction.setCategory(category);
         } else {
             transaction.setCategory(null);
@@ -117,7 +117,7 @@ public class TransactionService {
 
     private Transaction findTransaction(Long walletId, Long id) {
         Transaction transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Transação não encontrada"));
         if (!transaction.getWallet().getId().equals(walletId)) {
             throw new ResourceNotFoundException("Transaction not found");
         }

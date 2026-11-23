@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.financeiro.dto.AuthResponse;
-import br.com.financeiro.dto.ChangePasswordRequest;
 import br.com.financeiro.dto.ForgotPasswordRequest;
 import br.com.financeiro.dto.ForgotPasswordResponse;
 import br.com.financeiro.dto.LoginRequest;
@@ -42,7 +41,7 @@ import br.com.financeiro.util.TextUtil;
 @Service
 public class AuthService implements UserDetailsService {
 
-    private static final String NEUTRAL_MESSAGE = "If this email is registered, you will receive instructions shortly.";
+    private static final String NEUTRAL_MESSAGE = "Se este e-mail estiver cadastrado, você receberá as instruções em breve.";
 
     @Value("${app.debug-tokens:false}")
     private boolean debugTokensEnabled;
@@ -69,19 +68,19 @@ public class AuthService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmailIgnoreCase(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
     }
 
     public UserDetails loadUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
     }
 
     @Transactional
     public UserResponse register(RegisterRequest request) {
         String email = TextUtil.trimToNull(request.getEmail()).toLowerCase();
         if (userRepository.existsByEmailIgnoreCase(email)) {
-            throw new ConflictException("Email already registered");
+            throw new ConflictException("E-mail já cadastrado");
         }
 
         User user = new User();
@@ -99,7 +98,7 @@ public class AuthService implements UserDetailsService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         } catch (BadCredentialsException ex) {
-            throw new BadCredentialsException("Invalid credentials");
+            throw new BadCredentialsException("Credenciais inválidas");
         }
 
         User user = userRepository.findByEmailIgnoreCase(request.getEmail())
@@ -138,10 +137,10 @@ public class AuthService implements UserDetailsService {
     @Transactional
     public MessageResponse resetPassword(ResetPasswordRequest request) {
         PasswordResetToken record = tokenRepository.findByToken(request.getToken())
-                .orElseThrow(() -> new InvalidTokenException("Invalid or expired token"));
+                .orElseThrow(() -> new InvalidTokenException("Token inválido ou expirado"));
 
         if (record.isUsed() || record.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new InvalidTokenException("Invalid or expired token");
+            throw new InvalidTokenException("Token inválido ou expirado");
         }
 
         User user = record.getUser();
@@ -151,7 +150,7 @@ public class AuthService implements UserDetailsService {
         record.setUsed(true);
         tokenRepository.save(record);
 
-        return new MessageResponse("Password reset successfully.");
+        return new MessageResponse("Senha redefinida com sucesso.");
     }
 
     public UserResponse getProfile(User user) {
@@ -167,22 +166,22 @@ public class AuthService implements UserDetailsService {
     @Transactional
     public MessageResponse changePassword(User user, br.com.financeiro.dto.ChangePasswordRequest request) {
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
-            throw new BusinessException("Current password is incorrect");
+            throw new BusinessException("Senha atual incorreta");
         }
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
-        return new MessageResponse("Password changed successfully.");
+        return new MessageResponse("Senha alterada com sucesso.");
     }
 
     private void createDefaultCategories(User user) {
         String[][] defaults = {
-                { "Salary", "INCOME" },
-                { "Investments", "INCOME" },
-                { "Food", "EXPENSE" },
-                { "Transport", "EXPENSE" },
-                { "Housing", "EXPENSE" },
-                { "Leisure", "EXPENSE" },
-                { "Health", "EXPENSE" }
+                { "Salário", "INCOME" },
+                { "Investimentos", "INCOME" },
+                { "Alimentação", "EXPENSE" },
+                { "Transporte", "EXPENSE" },
+                { "Moradia", "EXPENSE" },
+                { "Lazer", "EXPENSE" },
+                { "Saúde", "EXPENSE" }
         };
         for (String[] item : defaults) {
             Category category = new Category();
@@ -198,7 +197,6 @@ public class AuthService implements UserDetailsService {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getCreatedAt()
-        );
+                user.getCreatedAt());
     }
 }

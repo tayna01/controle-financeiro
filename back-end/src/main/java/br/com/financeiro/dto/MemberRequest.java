@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MemberRequest {
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email")
+    @NotBlank(message = "E-mail é obrigatório")
+    @Email(message = "E-mail inválido")
     private String email;
 
-    @NotNull(message = "Role is required")
+    @NotNull(message = "Papel é obrigatório")
     private WalletRole role;
 }
