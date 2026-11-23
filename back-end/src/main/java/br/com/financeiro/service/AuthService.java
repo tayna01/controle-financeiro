@@ -29,12 +29,17 @@ import br.com.financeiro.entity.Category;
 import br.com.financeiro.entity.PasswordResetToken;
 import br.com.financeiro.entity.TransactionType;
 import br.com.financeiro.entity.User;
+import br.com.financeiro.entity.Wallet;
+import br.com.financeiro.entity.WalletMember;
+import br.com.financeiro.entity.WalletRole;
 import br.com.financeiro.exception.BusinessException;
 import br.com.financeiro.exception.ConflictException;
 import br.com.financeiro.exception.InvalidTokenException;
 import br.com.financeiro.repository.CategoryRepository;
 import br.com.financeiro.repository.PasswordResetTokenRepository;
 import br.com.financeiro.repository.UserRepository;
+import br.com.financeiro.repository.WalletMemberRepository;
+import br.com.financeiro.repository.WalletRepository;
 import br.com.financeiro.security.JwtService;
 import br.com.financeiro.util.TextUtil;
 
@@ -48,6 +53,12 @@ public class AuthService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private WalletRepository walletRepository;
+
+    @Autowired
+    private WalletMemberRepository walletMemberRepository;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -90,6 +101,7 @@ public class AuthService implements UserDetailsService {
         user = userRepository.save(user);
 
         createDefaultCategories(user);
+        createDefaultWallet(user);
         return toUserResponse(user);
     }
 
@@ -190,6 +202,19 @@ public class AuthService implements UserDetailsService {
             category.setType(TransactionType.valueOf(item[1]));
             categoryRepository.save(category);
         }
+    }
+
+    private void createDefaultWallet(User user) {
+        Wallet wallet = new Wallet();
+        wallet.setOwner(user);
+        wallet.setName("Carteira Pessoal");
+        wallet = walletRepository.save(wallet);
+
+        WalletMember member = new WalletMember();
+        member.setWallet(wallet);
+        member.setUser(user);
+        member.setRole(WalletRole.OWNER);
+        walletMemberRepository.save(member);
     }
 
     private UserResponse toUserResponse(User user) {

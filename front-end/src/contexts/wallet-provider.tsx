@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { WalletContext } from '@/contexts/wallet-context'
 import { useAuth } from '@/contexts/auth-context'
 import {
+  ensureOwnedDefaultWallet,
   getCachedWalletId,
   isWalletOwnedBy,
   listWallets,
@@ -31,7 +32,14 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
   const refresh = useCallback(async () => {
     try {
-      const data = await listWallets()
+      let data = await listWallets()
+      if (data.length === 0) {
+        const created = await ensureOwnedDefaultWallet(user?.nome ?? null)
+        if (created) {
+          setCachedWalletId(created.id)
+          data = await listWallets()
+        }
+      }
       const sorted = [...data].sort((a, b) => {
         const aOwned = isWalletOwnedBy(a, user?.nome)
         const bOwned = isWalletOwnedBy(b, user?.nome)

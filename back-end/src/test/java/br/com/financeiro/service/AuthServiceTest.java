@@ -29,6 +29,8 @@ import br.com.financeiro.exception.ConflictException;
 import br.com.financeiro.repository.CategoryRepository;
 import br.com.financeiro.repository.PasswordResetTokenRepository;
 import br.com.financeiro.repository.UserRepository;
+import br.com.financeiro.repository.WalletMemberRepository;
+import br.com.financeiro.repository.WalletRepository;
 import br.com.financeiro.security.JwtService;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,6 +38,12 @@ class AuthServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private WalletRepository walletRepository;
+
+    @Mock
+    private WalletMemberRepository walletMemberRepository;
 
     @Mock
     private CategoryRepository categoryRepository;
@@ -63,6 +71,7 @@ class AuthServiceTest {
         when(userRepository.existsByEmailIgnoreCase("ana@example.com")).thenReturn(false);
         when(passwordEncoder.encode("StrongPass@1")).thenReturn("hash");
         when(userRepository.save(any(User.class))).thenReturn(saved);
+        when(walletRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         authService.register(new RegisterRequest("  Ana Souza  ", "  ANA@Example.com ", "StrongPass@1"));
 
