@@ -5,20 +5,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import br.com.financeiro.entity.Usuario;
+import br.com.financeiro.entity.User;
 import br.com.financeiro.exception.ResourceNotFoundException;
-import br.com.financeiro.repository.UsuarioRepository;
+import br.com.financeiro.repository.UserRepository;
 
 @Component
 public class CurrentUserProvider {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UserRepository userRepository;
 
-    public Usuario getCurrentUser() {
+    public User getCurrentUser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getPrincipal() == null) {
-            throw new ResourceNotFoundException("Usuário autenticado não encontrado");
+            throw new ResourceNotFoundException("Authenticated user not found");
         }
 
         Object principal = authentication.getPrincipal();
@@ -30,7 +30,7 @@ public class CurrentUserProvider {
             username = principal.toString();
         }
 
-        return usuarioRepository.findByEmailIgnoreCase(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário autenticado não encontrado"));
+        return userRepository.findByEmailIgnoreCase(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Authenticated user not found"));
     }
 }

@@ -17,23 +17,23 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "token_redefinicao_senha")
-public class TokenRedefinicaoSenha extends Base {
+@Table(name = "password_reset_tokens")
+public class PasswordResetToken extends Base {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false, unique = true, length = 64)
     private String token;
 
-    @Column(name = "expira_em", nullable = false)
-    private LocalDateTime expiraEm;
+    @Column(name = "expires_at", nullable = false)
+    private LocalDateTime expiresAt;
 
     @Column(nullable = false)
-    private boolean utilizado;
+    private boolean used;
 }

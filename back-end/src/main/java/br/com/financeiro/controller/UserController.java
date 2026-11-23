@@ -13,35 +13,35 @@ import br.com.financeiro.dto.ChangePasswordRequest;
 import br.com.financeiro.dto.MessageResponse;
 import br.com.financeiro.dto.UpdateUserRequest;
 import br.com.financeiro.dto.UserResponse;
-import br.com.financeiro.entity.Usuario;
+import br.com.financeiro.entity.User;
 import br.com.financeiro.security.CurrentUserProvider;
-import br.com.financeiro.service.AutenticacaoService;
+import br.com.financeiro.service.AuthService;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/users")
-public class UsuarioController {
+public class UserController {
 
     @Autowired
-    private AutenticacaoService autenticacaoService;
+    private AuthService authService;
 
     @Autowired
     private CurrentUserProvider currentUserProvider;
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> me() {
-        return ResponseEntity.ok(autenticacaoService.getProfile(currentUserProvider.getCurrentUser()));
+        return ResponseEntity.ok(authService.getProfile(currentUserProvider.getCurrentUser()));
     }
 
     @PutMapping("/me")
     public ResponseEntity<UserResponse> update(@Valid @RequestBody UpdateUserRequest request) {
-        Usuario usuario = currentUserProvider.getCurrentUser();
-        return ResponseEntity.ok(autenticacaoService.updateProfile(usuario, request));
+        User user = currentUserProvider.getCurrentUser();
+        return ResponseEntity.ok(authService.updateProfile(user, request));
     }
 
     @PatchMapping("/me/password")
     public ResponseEntity<MessageResponse> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
-        Usuario usuario = currentUserProvider.getCurrentUser();
-        return ResponseEntity.ok(autenticacaoService.changePassword(usuario, request));
+        User user = currentUserProvider.getCurrentUser();
+        return ResponseEntity.ok(authService.changePassword(user, request));
     }
 }

@@ -6,7 +6,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import br.com.financeiro.entity.Usuario;
+import br.com.financeiro.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -29,10 +29,10 @@ public class JwtService {
         key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    public String generateToken(Usuario usuario) {
+    public String generateToken(User user) {
         return Jwts.builder()
-                .setSubject(String.valueOf(usuario.getId()))
-                .claim("email", usuario.getEmail())
+                .setSubject(String.valueOf(user.getId()))
+                .claim("email", user.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key, SignatureAlgorithm.HS256)

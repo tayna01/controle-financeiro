@@ -20,22 +20,22 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.financeiro.dto.SummaryResponse;
 import br.com.financeiro.dto.TransactionRequest;
 import br.com.financeiro.dto.TransactionResponse;
-import br.com.financeiro.dto.TransactionType;
-import br.com.financeiro.entity.Usuario;
+import br.com.financeiro.entity.TransactionType;
+import br.com.financeiro.entity.User;
 import br.com.financeiro.security.CurrentUserProvider;
-import br.com.financeiro.service.ResumoFinanceiroService;
-import br.com.financeiro.service.TransacaoService;
+import br.com.financeiro.service.SummaryService;
+import br.com.financeiro.service.TransactionService;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/wallets/{walletId}")
-public class TransacaoController {
+public class TransactionController {
 
     @Autowired
-    private TransacaoService transacaoService;
+    private TransactionService transactionService;
 
     @Autowired
-    private ResumoFinanceiroService resumoFinanceiroService;
+    private SummaryService summaryService;
 
     @Autowired
     private CurrentUserProvider currentUserProvider;
@@ -47,35 +47,35 @@ public class TransacaoController {
             @RequestParam(value = "startDate", required = false) LocalDate startDate,
             @RequestParam(value = "endDate", required = false) LocalDate endDate,
             Pageable pageable) {
-        Usuario usuario = currentUserProvider.getCurrentUser();
-        return ResponseEntity.ok(transacaoService.list(usuario, walletId, type, categoryId, startDate, endDate, pageable));
+        User user = currentUserProvider.getCurrentUser();
+        return ResponseEntity.ok(transactionService.list(user, walletId, type, categoryId, startDate, endDate, pageable));
     }
 
     @PostMapping("/transactions")
     public ResponseEntity<TransactionResponse> create(@PathVariable Long walletId,
             @Valid @RequestBody TransactionRequest request) {
-        Usuario usuario = currentUserProvider.getCurrentUser();
-        return ResponseEntity.status(HttpStatus.CREATED).body(transacaoService.create(usuario, walletId, request));
+        User user = currentUserProvider.getCurrentUser();
+        return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.create(user, walletId, request));
     }
 
     @GetMapping("/transactions/{id}")
     public ResponseEntity<TransactionResponse> get(@PathVariable Long walletId, @PathVariable Long id) {
-        Usuario usuario = currentUserProvider.getCurrentUser();
-        return ResponseEntity.ok(transacaoService.get(usuario, walletId, id));
+        User user = currentUserProvider.getCurrentUser();
+        return ResponseEntity.ok(transactionService.get(user, walletId, id));
     }
 
     @PutMapping("/transactions/{id}")
     public ResponseEntity<TransactionResponse> update(@PathVariable Long walletId,
             @PathVariable Long id,
             @Valid @RequestBody TransactionRequest request) {
-        Usuario usuario = currentUserProvider.getCurrentUser();
-        return ResponseEntity.ok(transacaoService.update(usuario, walletId, id, request));
+        User user = currentUserProvider.getCurrentUser();
+        return ResponseEntity.ok(transactionService.update(user, walletId, id, request));
     }
 
     @DeleteMapping("/transactions/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long walletId, @PathVariable Long id) {
-        Usuario usuario = currentUserProvider.getCurrentUser();
-        transacaoService.delete(usuario, walletId, id);
+        User user = currentUserProvider.getCurrentUser();
+        transactionService.delete(user, walletId, id);
         return ResponseEntity.noContent().build();
     }
 
@@ -83,7 +83,7 @@ public class TransacaoController {
     public ResponseEntity<SummaryResponse> summary(@PathVariable Long walletId,
             @RequestParam(value = "startDate", required = false) LocalDate startDate,
             @RequestParam(value = "endDate", required = false) LocalDate endDate) {
-        Usuario usuario = currentUserProvider.getCurrentUser();
-        return ResponseEntity.ok(resumoFinanceiroService.summary(usuario, walletId, startDate, endDate));
+        User user = currentUserProvider.getCurrentUser();
+        return ResponseEntity.ok(summaryService.summary(user, walletId, startDate, endDate));
     }
 }

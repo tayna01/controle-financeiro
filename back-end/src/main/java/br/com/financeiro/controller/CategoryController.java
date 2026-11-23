@@ -17,44 +17,44 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.financeiro.dto.CategoryRequest;
 import br.com.financeiro.dto.CategoryResponse;
-import br.com.financeiro.dto.TransactionType;
-import br.com.financeiro.entity.Usuario;
+import br.com.financeiro.entity.TransactionType;
+import br.com.financeiro.entity.User;
 import br.com.financeiro.security.CurrentUserProvider;
-import br.com.financeiro.service.CategoriaService;
+import br.com.financeiro.service.CategoryService;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/categories")
-public class CategoriaController {
+public class CategoryController {
 
     @Autowired
-    private CategoriaService categoriaService;
+    private CategoryService categoryService;
 
     @Autowired
     private CurrentUserProvider currentUserProvider;
 
     @GetMapping
     public ResponseEntity<List<CategoryResponse>> list(@RequestParam(value = "type", required = false) TransactionType type) {
-        Usuario usuario = currentUserProvider.getCurrentUser();
-        return ResponseEntity.ok(categoriaService.list(usuario, type));
+        User user = currentUserProvider.getCurrentUser();
+        return ResponseEntity.ok(categoryService.list(user, type));
     }
 
     @PostMapping
     public ResponseEntity<CategoryResponse> create(@Valid @RequestBody CategoryRequest request) {
-        Usuario usuario = currentUserProvider.getCurrentUser();
-        return ResponseEntity.status(HttpStatus.CREATED).body(categoriaService.create(usuario, request));
+        User user = currentUserProvider.getCurrentUser();
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.create(user, request));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CategoryResponse> update(@PathVariable Long id, @Valid @RequestBody CategoryRequest request) {
-        Usuario usuario = currentUserProvider.getCurrentUser();
-        return ResponseEntity.ok(categoriaService.update(usuario, id, request));
+        User user = currentUserProvider.getCurrentUser();
+        return ResponseEntity.ok(categoryService.update(user, id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        Usuario usuario = currentUserProvider.getCurrentUser();
-        categoriaService.delete(usuario, id);
+        User user = currentUserProvider.getCurrentUser();
+        categoryService.delete(user, id);
         return ResponseEntity.noContent().build();
     }
 }

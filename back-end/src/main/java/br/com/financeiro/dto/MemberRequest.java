@@ -1,6 +1,6 @@
 package br.com.financeiro.dto;
 
-import br.com.financeiro.entity.PapelCarteira;
+import br.com.financeiro.entity.WalletRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MemberRequest {
 
-    @NotBlank(message = "E-mail é obrigatório")
-    @Email(message = "E-mail inválido")
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email")
     private String email;
 
-    @NotNull(message = "Papel é obrigatório")
-    private PapelCarteira role;
+    @NotNull(message = "Role is required")
+    private WalletRole role;
 }

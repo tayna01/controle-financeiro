@@ -14,21 +14,21 @@ import java.time.LocalDateTime;
 @Setter
 public abstract class Base {
 
-    @Column(name = "criado_em", nullable = false, updatable = false)
-    private LocalDateTime criadoEm;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-    @Column(name = "atualizado_em", nullable = false)
-    private LocalDateTime atualizadoEm;
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
         LocalDateTime agora = LocalDateTime.now();
-        criadoEm = agora;
-        atualizadoEm = agora;
+        createdAt = agora;
+        updatedAt = agora;
     }
 
     @PreUpdate
     protected void onUpdate() {
-        atualizadoEm = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 }

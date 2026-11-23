@@ -58,7 +58,7 @@ class RateLimitFilterTest {
         assertNotNull(contentType, "Content-Type não deveria ser nulo");
         assertEquals(MediaType.APPLICATION_JSON_VALUE, contentType.split(";")[0]);
 
-        assertTrue(bloqueada.getContentAsString().contains("Muitas tentativas"));
+        assertTrue(bloqueada.getContentAsString().contains("Too many attempts"));
         assertEquals(2, chamadas.get());
     }
 

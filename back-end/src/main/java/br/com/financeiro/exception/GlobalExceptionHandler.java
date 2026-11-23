@@ -37,12 +37,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiError> handleAccessDenied(AccessDeniedException ex) {
-        return build(HttpStatus.FORBIDDEN, ex.getMessage() != null ? ex.getMessage() : "Acesso negado");
+        return build(HttpStatus.FORBIDDEN, ex.getMessage() != null ? ex.getMessage() : "Access denied");
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiError> handleBadCredentials(BadCredentialsException ex) {
-        return build(HttpStatus.UNAUTHORIZED, "E-mail ou senha incorretos");
+        return build(HttpStatus.UNAUTHORIZED, "Incorrect email or password");
     }
 
     @ExceptionHandler(InvalidTokenException.class)
@@ -62,13 +62,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiError> handleDataIntegrity(DataIntegrityViolationException ex) {
         log.warn("Conflito de integridade: {}", ex.getMessage());
-        return build(HttpStatus.CONFLICT, "Registro duplicado ou conflito de integridade");
+        return build(HttpStatus.CONFLICT, "Duplicate record or integrity conflict");
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex) {
         log.error("Erro não tratado", ex);
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor");
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
     }
 
     private ResponseEntity<ApiError> build(HttpStatus status, String message) {

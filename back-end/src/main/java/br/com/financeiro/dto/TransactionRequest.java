@@ -3,6 +3,7 @@ package br.com.financeiro.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import br.com.financeiro.entity.TransactionType;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TransactionRequest {
 
-    @NotNull(message = "Tipo é obrigatório")
+    @NotNull(message = "Type is required")
     private TransactionType type;
 
     @NotNull(message = "Valor é obrigatório")

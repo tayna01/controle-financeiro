@@ -16,7 +16,7 @@ import br.com.financeiro.dto.MessageResponse;
 import br.com.financeiro.dto.RegisterRequest;
 import br.com.financeiro.dto.ResetPasswordRequest;
 import br.com.financeiro.dto.UserResponse;
-import br.com.financeiro.service.AutenticacaoService;
+import br.com.financeiro.service.AuthService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -24,25 +24,25 @@ import jakarta.validation.Valid;
 public class AuthController {
 
     @Autowired
-    private AutenticacaoService autenticacaoService;
+    private AuthService authService;
 
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(autenticacaoService.register(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(autenticacaoService.login(request));
+        return ResponseEntity.ok(authService.login(request));
     }
 
     @PostMapping("/forgot-password")
     public ResponseEntity<ForgotPasswordResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
-        return ResponseEntity.ok(autenticacaoService.forgotPassword(request));
+        return ResponseEntity.ok(authService.forgotPassword(request));
     }
 
     @PostMapping("/reset-password")
     public ResponseEntity<MessageResponse> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
-        return ResponseEntity.ok(autenticacaoService.resetPassword(request));
+        return ResponseEntity.ok(authService.resetPassword(request));
     }
 }

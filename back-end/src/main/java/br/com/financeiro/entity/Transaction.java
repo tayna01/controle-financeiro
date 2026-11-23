@@ -20,35 +20,35 @@ import java.time.LocalDate;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "transacao")
-public class Transacao extends Base {
+@Table(name = "transactions")
+public class Transaction extends Base {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "carteira_id", nullable = false)
-    private Carteira carteira;
+    @JoinColumn(name = "wallet_id", nullable = false)
+    private Wallet wallet;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "categoria_id")
-    private Categoria categoria;
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "criado_por_id", nullable = false)
-    private Usuario criadoPor;
+    @JoinColumn(name = "created_by_id", nullable = false)
+    private User createdBy;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private TipoTransacao tipo;
+    private TransactionType type;
 
     @Column(nullable = false, precision = 19, scale = 2)
-    private BigDecimal valor;
+    private BigDecimal amount;
 
     @Column(length = 255)
-    private String descricao;
+    private String description;
 
     @Column(nullable = false)
-    private LocalDate data;
+    private LocalDate date;
 }

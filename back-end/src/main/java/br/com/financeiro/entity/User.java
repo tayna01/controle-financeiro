@@ -22,33 +22,33 @@ import lombok.ToString;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "usuario")
-public class Usuario extends Base implements UserDetails {
+@Table(name = "users")
+public class User extends Base implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 100)
-    private String nome;
+    private String name;
 
     @Column(nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(name = "senha_criptografada", nullable = false)
-    private String senhaCriptografada;
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "dono")
-    private List<Carteira> carteiras = new ArrayList<>();
+    @OneToMany(mappedBy = "owner")
+    private List<Wallet> wallets = new ArrayList<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "usuario")
-    private List<CarteiraMembro> carteiraMembros = new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    private List<WalletMember> walletMembers = new ArrayList<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "usuario")
-    private List<Categoria> categorias = new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    private List<Category> categories = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -57,7 +57,7 @@ public class Usuario extends Base implements UserDetails {
 
     @Override
     public String getPassword() {
-        return senhaCriptografada;
+        return passwordHash;
     }
 
     @Override

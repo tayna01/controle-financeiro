@@ -93,6 +93,6 @@ public class RateLimitFilter extends OncePerRequestFilter {
         response.setCharacterEncoding("UTF-8");
         objectMapper.writeValue(response.getWriter(),
                 ApiError.of(429, "Too Many Requests",
-                        "Muitas tentativas. Tente novamente em instantes."));
+                        "Too many attempts. Please try again shortly."));
     }
 }

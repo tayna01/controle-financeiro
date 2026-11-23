@@ -13,12 +13,12 @@ import { cn } from '@/lib/utils'
 import type { WalletMember, WalletRole } from '@/services/wallet-sharing'
 
 const ROLE_LABELS: Record<WalletRole, string> = {
-  DONO: 'Dono',
+  OWNER: 'Owner',
   EDITOR: 'Editor',
-  VISUALIZADOR: 'Visualizador',
+  VIEWER: 'Viewer',
 }
 
-const ROLE_OPTIONS: WalletRole[] = ['EDITOR', 'VISUALIZADOR']
+const ROLE_OPTIONS: WalletRole[] = ['EDITOR', 'VIEWER']
 
 interface MemberListProps {
   members: WalletMember[]
@@ -54,7 +54,7 @@ export function MemberList({
       {members.map((member) => {
         const isRoleChanging = changingRoleId === member.userId
         const isRemoving = removingId === member.userId
-        const isDonor = member.role === 'DONO'
+        const isOwnerMember = member.role === 'OWNER'
 
         return (
           <div key={member.userId} className="flex items-center justify-between gap-3 p-4">
@@ -69,7 +69,7 @@ export function MemberList({
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
-              {isDonor ? (
+              {isOwnerMember ? (
                 <Badge className="gap-1 bg-primary/10 text-primary">
                   <ShieldCheck />
                   {ROLE_LABELS[member.role]}
@@ -111,7 +111,7 @@ export function MemberList({
                 </Badge>
               )}
 
-              {!isDonor && isOwner && (
+              {!isOwnerMember && isOwner && (
                 <Button
                   variant="ghost"
                   size="icon"

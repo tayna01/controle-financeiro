@@ -1,6 +1,6 @@
 package br.com.financeiro.dto;
 
-import br.com.financeiro.entity.PapelCarteira;
+import br.com.financeiro.entity.WalletRole;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MemberRoleRequest {
 
-    @NotNull(message = "Papel é obrigatório")
-    private PapelCarteira role;
+    @NotNull(message = "Role is required")
+    private WalletRole role;
 }

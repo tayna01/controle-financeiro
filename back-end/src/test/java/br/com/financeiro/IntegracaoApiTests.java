@@ -181,7 +181,7 @@ class IntegracaoApiTests {
                 mockMvc.perform(patch("/api/v1/wallets/{id}/members/{userId}", carteiraId, usuarioB)
                                 .header("Authorization", "Bearer " + tokenA)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(json(Map.of("role", "VISUALIZADOR"))))
+                                .content(json(Map.of("role", "VIEWER"))))
                                 .andExpect(status().isOk());
 
                 mockMvc.perform(post("/api/v1/wallets/{id}/transactions", carteiraId)

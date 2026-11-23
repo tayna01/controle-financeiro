@@ -20,71 +20,71 @@ import br.com.financeiro.dto.MemberResponse;
 import br.com.financeiro.dto.MemberRoleRequest;
 import br.com.financeiro.dto.WalletRequest;
 import br.com.financeiro.dto.WalletResponse;
-import br.com.financeiro.entity.Usuario;
+import br.com.financeiro.entity.User;
 import br.com.financeiro.security.CurrentUserProvider;
-import br.com.financeiro.service.CarteiraService;
+import br.com.financeiro.service.WalletService;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/wallets")
-public class CarteiraController {
+public class WalletController {
 
     @Autowired
-    private CarteiraService carteiraService;
+    private WalletService walletService;
 
     @Autowired
     private CurrentUserProvider currentUserProvider;
 
     @GetMapping
     public ResponseEntity<List<WalletResponse>> list() {
-        return ResponseEntity.ok(carteiraService.list(currentUser()));
+        return ResponseEntity.ok(walletService.list(currentUser()));
     }
 
     @PostMapping
     public ResponseEntity<WalletResponse> create(@Valid @RequestBody WalletRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(carteiraService.create(currentUser(), request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(walletService.create(currentUser(), request));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<WalletResponse> get(@PathVariable Long id) {
-        return ResponseEntity.ok(carteiraService.get(currentUser(), id));
+        return ResponseEntity.ok(walletService.get(currentUser(), id));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<WalletResponse> update(@PathVariable Long id, @Valid @RequestBody WalletRequest request) {
-        return ResponseEntity.ok(carteiraService.update(currentUser(), id, request));
+        return ResponseEntity.ok(walletService.update(currentUser(), id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        carteiraService.delete(currentUser(), id);
+        walletService.delete(currentUser(), id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/members")
     public ResponseEntity<List<MemberResponse>> listMembers(@PathVariable Long id) {
-        return ResponseEntity.ok(carteiraService.listMembers(currentUser(), id));
+        return ResponseEntity.ok(walletService.listMembers(currentUser(), id));
     }
 
     @PostMapping("/{id}/members")
     public ResponseEntity<MemberResponse> addMember(@PathVariable Long id, @Valid @RequestBody MemberRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(carteiraService.addMember(currentUser(), id, request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(walletService.addMember(currentUser(), id, request));
     }
 
     @PatchMapping("/{id}/members/{userId}")
     public ResponseEntity<MemberResponse> updateRole(@PathVariable Long id,
             @PathVariable Long userId,
             @Valid @RequestBody MemberRoleRequest request) {
-        return ResponseEntity.ok(carteiraService.updateRole(currentUser(), id, userId, request));
+        return ResponseEntity.ok(walletService.updateRole(currentUser(), id, userId, request));
     }
 
     @DeleteMapping("/{id}/members/{userId}")
     public ResponseEntity<Void> removeMember(@PathVariable Long id, @PathVariable Long userId) {
-        carteiraService.removeMember(currentUser(), id, userId);
+        walletService.removeMember(currentUser(), id, userId);
         return ResponseEntity.noContent().build();
     }
 
-    private Usuario currentUser() {
+    private User currentUser() {
         return currentUserProvider.getCurrentUser();
     }
 }

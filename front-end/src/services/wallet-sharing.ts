@@ -1,7 +1,7 @@
 import { api, getApiErrorMessage } from '@/lib/api'
 import { getOrCreateDefaultWallet } from '@/services/wallets'
 
-export type WalletRole = 'DONO' | 'EDITOR' | 'VISUALIZADOR'
+export type WalletRole = 'OWNER' | 'EDITOR' | 'VIEWER'
 
 export interface WalletMember {
   userId: number

@@ -10,43 +10,37 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "carteira_membro", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_carteira_usuario", columnNames = { "carteira_id", "usuario_id" })
+@Table(name = "categories", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_category_user_name", columnNames = { "user_id", "name" })
 })
-public class CarteiraMembro extends Base {
+public class Category extends Base {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "carteira_id", nullable = false)
-    private Carteira carteira;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    @Column(nullable = false, length = 80)
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private PapelCarteira papel;
+    private TransactionType type;
 
-    @Column(name = "entrado_em", nullable = false, updatable = false)
-    private LocalDateTime entradoEm;
+    @Column(length = 9)
+    private String color;
 
-    @PrePersist
-    protected void onEntrar() {
-        entradoEm = LocalDateTime.now();
-    }
+    @Column(length = 50)
+    private String icon;
 }

@@ -10,37 +10,43 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "categoria", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_categoria_usuario_nome", columnNames = { "usuario_id", "nome" })
+@Table(name = "wallet_members", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_wallet_user", columnNames = { "wallet_id", "user_id" })
 })
-public class Categoria extends Base {
+public class WalletMember extends Base {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    @JoinColumn(name = "wallet_id", nullable = false)
+    private Wallet wallet;
 
-    @Column(nullable = false, length = 80)
-    private String nome;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private TipoTransacao tipo;
+    private WalletRole role;
 
-    @Column(length = 9)
-    private String cor;
+    @Column(name = "joined_at", nullable = false, updatable = false)
+    private LocalDateTime joinedAt;
 
-    @Column(length = 50)
-    private String icone;
+    @PrePersist
+    protected void onJoin() {
+        joinedAt = LocalDateTime.now();
+    }
 }

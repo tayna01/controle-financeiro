@@ -24,7 +24,7 @@ export function useWalletSharing() {
   const [changingRoleId, setChangingRoleId] = useState<number | null>(null)
   const [pendingRemove, setPendingRemove] = useState<WalletMember | null>(null)
 
-  const isOwner = members.some((member) => member.role === 'DONO')
+  const isOwner = members.some((member) => member.role === 'OWNER')
   const walletName = selectedWallet?.name ?? ''
 
   const load = useCallback(async () => {

@@ -26,7 +26,7 @@ import type { WalletRole } from '@/services/wallet-sharing'
 
 const ROLE_OPTIONS: { value: WalletRole; label: string }[] = [
   { value: 'EDITOR', label: 'Editor' },
-  { value: 'VISUALIZADOR', label: 'Visualizador' },
+  { value: 'VIEWER', label: 'Viewer' },
 ]
 
 const shareSchema = z.object({
@@ -49,7 +49,7 @@ export function ShareWalletDialog({
   onSubmit,
 }: ShareWalletDialogProps) {
   const { user } = useAuth()
-  const [role, setRole] = useState<WalletRole>('VISUALIZADOR')
+  const [role, setRole] = useState<WalletRole>('VIEWER')
 
   const {
     register,
@@ -64,14 +64,14 @@ export function ShareWalletDialog({
     const ok = await onSubmit({ email: data.email, role })
     if (ok) {
       reset()
-      setRole('VISUALIZADOR')
+      setRole('VIEWER')
     }
   }
 
   function handleOpenChange(next: boolean) {
     if (!next) {
       reset()
-      setRole('VISUALIZADOR')
+      setRole('VIEWER')
     }
     onOpenChange(next)
   }
