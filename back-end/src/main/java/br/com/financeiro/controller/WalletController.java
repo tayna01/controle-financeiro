@@ -2,6 +2,7 @@ package br.com.financeiro.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ import br.com.financeiro.dto.MemberRoleRequest;
 import br.com.financeiro.dto.WalletRequest;
 import br.com.financeiro.dto.WalletResponse;
 import br.com.financeiro.entity.User;
+import br.com.financeiro.entity.Wallet;
 import br.com.financeiro.security.CurrentUserProvider;
 import br.com.financeiro.service.WalletAccessService;
 import br.com.financeiro.service.WalletEventPublisher;
@@ -32,6 +34,7 @@ import br.com.financeiro.repository.TransactionRepository;
 import br.com.financeiro.report.CsvReportGenerator;
 import br.com.financeiro.report.PdfReportGenerator;
 import br.com.financeiro.report.ReportGenerator;
+import br.com.financeiro.service.AiService;
 import br.com.financeiro.service.WalletService;
 import jakarta.validation.Valid;
 
@@ -44,6 +47,9 @@ public class WalletController {
 
     @Autowired
     private WalletEventPublisher walletEventPublisher;
+
+    @Autowired
+    private AiService aiService;
 
     @Autowired
     private WalletAccessService walletAccessService;
@@ -136,6 +142,20 @@ public class WalletController {
                 .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=extrato." + generator.fileExtension())
                 .body(content);
+    }
+
+    @GetMapping("/{id}/insights")
+    public ResponseEntity<Map<String, String>> insights(@PathVariable Long id,
+            @RequestParam(value = "startDate", required = false) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) LocalDate endDate) {
+        User user = currentUserProvider.getCurrentUser();
+        LocalDate start = startDate != null ? startDate : LocalDate.now().withDayOfMonth(1);
+        LocalDate end = endDate != null ? endDate : LocalDate.now();
+        String insight = aiService.insights(user, id, start, end);
+        if (insight == null) {
+            return ResponseEntity.ok(Map.of("insight", ""));
+        }
+        return ResponseEntity.ok(Map.of("insight", insight));
     }
 
     private User currentUser() {

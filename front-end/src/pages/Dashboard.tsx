@@ -13,6 +13,7 @@ import {
 } from '@/services/transactions'
 import { useWallet } from '@/contexts/wallet-context'
 import { api, getApiErrorMessage } from '@/lib/api'
+import { fetchInsights } from '@/services/ai'
 import { fetchEventSource } from '@microsoft/fetch-event-source'
 import { useToast } from '@/hooks/use-toast'
 
@@ -47,6 +48,7 @@ export function Dashboard() {
   const walletId = selectedWallet?.id
   const [summary, setSummary] = useState<Summary | null>(null)
   const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [insight, setInsight] = useState<string | null>(null)
   const [loadedWalletId, setLoadedWalletId] = useState<number | null>(null)
   const [failure, setFailure] = useState<Failure | null>(null)
 
@@ -60,6 +62,9 @@ export function Dashboard() {
           setTransactions(transactionData)
           setLoadedWalletId(walletId)
           setFailure(null)
+          fetchInsights(walletId).then((data) => {
+            if (active && data) setInsight(data)
+          })
         }
       })
       .catch((error) => {
@@ -153,6 +158,11 @@ export function Dashboard() {
             income={summary.totalIncome}
             expense={summary.totalExpense}
           />
+          {insight && (
+            <Card className="p-4 text-sm text-muted">
+              <strong>Insight de IA:</strong> {insight}
+            </Card>
+          )}
           <div className="grid gap-6 lg:grid-cols-2">
             <ExpenseChart transactions={transactions} />
             <RecentTransactions transactions={transactions} />

@@ -24,6 +24,7 @@ import {
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import type { Category } from '@/services/categories'
 import type { Transaction, TransactionInput } from '@/services/transactions'
+import { categorizeTransaction } from '@/services/ai'
 
 const transactionSchema = z.object({
   type: z.enum(['income', 'expense']),
@@ -174,6 +175,14 @@ export function TransactionForm({
               id="transaction-description"
               placeholder="Ex.: Mercado"
               {...register('description')}
+              onBlur={async (event) => {
+                const value = event.target.value.trim()
+                if (!value) return
+                const result = await categorizeTransaction(value)
+                if (result?.categoryId) {
+                  setValue('categoryId', String(result.categoryId))
+                }
+              }}
             />
             {errors.description && (
               <p className="text-sm text-expense">
