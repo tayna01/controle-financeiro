@@ -107,12 +107,12 @@ export function Dashboard() {
             .catch(() => {})
           const verb =
             payload.action === 'CREATED'
-              ? 'added'
+              ? 'adicionou'
               : payload.action === 'UPDATED'
-                ? 'updated'
-                : 'deleted'
+                ? 'atualizou'
+                : 'excluiu'
           toast({
-            title: `${payload.actorName} ${verb} a transaction`,
+            title: `${payload.actorName} ${verb} uma transação`,
           })
         } catch {
           // ignore malformed events
