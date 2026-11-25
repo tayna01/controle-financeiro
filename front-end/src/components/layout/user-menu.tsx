@@ -57,7 +57,9 @@ export function UserMenu() {
             className="size-9 shrink-0 cursor-pointer overflow-hidden rounded-full border-2 border-primary/40 transition-all hover:ring-2 hover:ring-primary/40 focus-visible:ring-2 focus-visible:ring-primary focus:outline-none"
           >
             <Avatar className="size-full rounded-full">
-              <AvatarFallback>{getInitials(user.nome)}</AvatarFallback>
+              <AvatarFallback className="bg-primary text-primary-foreground">
+                {getInitials(user.nome)}
+              </AvatarFallback>
             </Avatar>
           </button>
         </DropdownMenuTrigger>
@@ -66,7 +68,9 @@ export function UserMenu() {
           <DropdownMenuLabel>
             <div className="flex items-center gap-3">
               <Avatar className="size-10 shrink-0">
-                <AvatarFallback>{getInitials(user.nome)}</AvatarFallback>
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  {getInitials(user.nome)}
+                </AvatarFallback>
               </Avatar>
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">{user.nome}</p>
