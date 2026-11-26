@@ -155,9 +155,9 @@ public class AuthService implements UserDetailsService {
                         + "<p>Para redefinir sua senha, acesse: <a href=\"" + resetLink + "\">" + resetLink + "</a></p>"
                         + "<p>Este link expira em 1 hora.</p>";
                 try {
-                    emailService.sendHtml(user.getEmail(), "Redefinicao de senha", html);
+                    emailService.sendHtml(user.getEmail(), "Redefinição de senha", html);
                 } catch (Exception ex) {
-                    log.error("Falha ao enviar e-mail de redefinicao para {}", user.getEmail(), ex);
+                    log.error("Falha ao enviar e-mail de redefinição de senha para {}", user.getEmail(), ex);
                 }
             }
 
