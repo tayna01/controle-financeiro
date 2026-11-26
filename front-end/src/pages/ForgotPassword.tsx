@@ -22,7 +22,6 @@ type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>
 export function ForgotPassword() {
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
-  const [resetToken, setResetToken] = useState<string | null>(null)
   const { toast } = useToast()
   const {
     register,
@@ -35,8 +34,7 @@ export function ForgotPassword() {
   async function onSubmit(data: ForgotPasswordData) {
     setLoading(true)
     try {
-      const response = await forgotPassword(data.email)
-      setResetToken(response.debugToken ?? null)
+      await forgotPassword(data.email)
       setSent(true)
     } catch (error) {
       toast({
@@ -75,26 +73,12 @@ export function ForgotPassword() {
                 redefinição para você.
               </p>
 
-              {resetToken && (
-                <div className="mt-8 rounded-xl bg-primary/10 px-4 py-3 text-sm text-primary">
-                  Link de redefinição (ambiente de teste):
-                  <br />
-                  <Link
-                    to={`/redefinir-senha/${resetToken}`}
-                    className="font-semibold break-all underline"
-                  >
-                    /redefinir-senha/{resetToken}
-                  </Link>
-                </div>
-              )}
-
               <Button
                 type="button"
                 size="lg"
                 className="mt-4 w-full"
                 onClick={() => {
                   setSent(false)
-                  setResetToken(null)
                 }}
               >
                 Enviar novamente
