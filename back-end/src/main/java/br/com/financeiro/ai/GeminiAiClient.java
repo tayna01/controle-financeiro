@@ -21,7 +21,7 @@ public class GeminiAiClient implements AiClient {
     @Value("${gemini.api-key:}")
     private String apiKey;
 
-    @Value("${gemini.model:gemini-1.5-flash}")
+    @Value("${gemini.model:gemini-3.5-flash-lite}")
     private String model;
 
     private final HttpClient httpClient = HttpClient.newBuilder()
