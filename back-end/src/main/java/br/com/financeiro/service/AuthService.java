@@ -14,6 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,10 +48,15 @@ import br.com.financeiro.util.TextUtil;
 @Service
 public class AuthService implements UserDetailsService {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
+
     private static final String NEUTRAL_MESSAGE = "Se este e-mail estiver cadastrado, você receberá as instruções em breve.";
 
     @Value("${app.debug-tokens:false}")
     private boolean debugTokensEnabled;
+
+    @Value("${app.frontend-url:http://localhost:5173}")
+    private String frontendUrl;
 
     @Autowired
     private UserRepository userRepository;
@@ -75,6 +82,9 @@ public class AuthService implements UserDetailsService {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -138,6 +148,18 @@ public class AuthService implements UserDetailsService {
             token.setExpiresAt(LocalDateTime.now().plusHours(1));
             token.setUsed(false);
             tokenRepository.save(token);
+
+            if (emailService.isConfigured()) {
+                String resetLink = frontendUrl + "/redefinir-senha/" + token.getToken();
+                String html = "<p>Ola " + user.getName() + ",</p>"
+                        + "<p>Para redefinir sua senha, acesse: <a href=\"" + resetLink + "\">" + resetLink + "</a></p>"
+                        + "<p>Este link expira em 1 hora.</p>";
+                try {
+                    emailService.sendHtml(user.getEmail(), "Redefinicao de senha", html);
+                } catch (Exception ex) {
+                    log.error("Falha ao enviar e-mail de redefinicao para {}", user.getEmail(), ex);
+                }
+            }
 
             if (debugTokensEnabled) {
                 debugToken = token.getToken();

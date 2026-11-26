@@ -32,6 +32,7 @@ import br.com.financeiro.repository.UserRepository;
 import br.com.financeiro.repository.WalletMemberRepository;
 import br.com.financeiro.repository.WalletRepository;
 import br.com.financeiro.security.JwtService;
+import br.com.financeiro.service.EmailService;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -59,6 +60,9 @@ class AuthServiceTest {
 
     @Mock
     private JwtService jwtService;
+
+    @Mock
+    private EmailService emailService;
 
     @InjectMocks
     private AuthService authService;
